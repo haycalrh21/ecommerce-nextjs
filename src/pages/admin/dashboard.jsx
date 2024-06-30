@@ -1,25 +1,32 @@
-import { getSession } from "next-auth/react";
+// import { getSession } from "next-auth/react";
 
-export async function getServerSideProps(context) {
-	const session = await getSession(context);
+import { useSession } from "next-auth/react";
 
-	// Periksa apakah session ada dan user memiliki role admin
-	if (!session || session.user.role !== "admin") {
-		return {
-			redirect: {
-				destination: "/",
-				permanent: false,
-			},
-		};
-	}
+// export async function getServerSideProps(context) {
+// 	const session = await getSession(context);
 
-	// Jika session ada dan user memiliki role admin, lanjutkan ke halaman admin dashboard
-	return {
-		props: {}, // Jika perlu, Anda bisa menyertakan props tambahan untuk halaman admin dashboard di sini
-	};
-}
+// 	// Periksa apakah session ada dan user memiliki role admin
+// 	if (!session || session.user.role !== "admin") {
+// 		return {
+// 			redirect: {
+// 				destination: "/",
+// 				permanent: false,
+// 			},
+// 		};
+// 	}
+
+// 	// Jika session ada dan user memiliki role admin, lanjutkan ke halaman admin dashboard
+// 	return {
+// 		props: {}, // Jika perlu, Anda bisa menyertakan props tambahan untuk halaman admin dashboard di sini
+// 	};
+// }
 
 const Dashboard = () => {
+	const { data: session, status } = useSession();
+
+	if (session?.user?.role !== "admin" || status !== "authenticated") {
+		return null;
+	}
 	return (
 		<div>
 			<h1 className='mt-20'>Admin Dashboard</h1>
