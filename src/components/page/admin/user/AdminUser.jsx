@@ -1,19 +1,30 @@
 import React, { useEffect, useState } from "react";
 import { AdminDashboard } from "../AdminLayout";
+import { useSession } from "next-auth/react";
 
 export default function AdminUser() {
+	const { data: session, status } = useSession();
 	const [users, setUsers] = useState([]);
 
-	const dataUser = async () => {
-		const response = await fetch("/api/user");
-		const data = await response.json();
-		setUsers(data);
-		console.log(data);
-	};
-
 	useEffect(() => {
-		dataUser();
-	}, []);
+		const fetchUsers = async () => {
+			if (session) {
+				const res = await fetch("/api/user", {
+					headers: {
+						Authorization: `Bearer ${session.accessToken}`,
+					},
+				});
+				const data = await res.json();
+				setUsers(data);
+			}
+		};
+
+		fetchUsers();
+	}, [session]);
+
+	if (status === "loading") return <p>Loading...</p>;
+	if (!session) return <p>Please log in</p>;
+
 	return (
 		<AdminDashboard>
 			<div>
@@ -22,19 +33,20 @@ export default function AdminUser() {
 					<table>
 						<thead>
 							<tr>
-								<th>name</th>
-								<th>email</th>
-								<th>role</th>
-								<th>aksi</th>
+								<th>Name</th>
+								<th>Email</th>
+								<th>Role</th>
+								<th>Action</th>
 							</tr>
 						</thead>
 						<tbody>
-							{users.map((users) => (
-								<tr key={users._id}>
-									<td>{users.name}</td>
-									<td>{users.email}</td>
-									<td>{users.role}</td>
-									<td>delete</td>
+							{users.map((user) => (
+								<tr key={user._id}>
+									<td>{user.name}</td>
+									<td>{user.email}</td>
+									<td>{user.role}</td>
+									<td>Delete</td>{" "}
+									{/* Tambahkan fungsi delete jika diperlukan */}
 								</tr>
 							))}
 						</tbody>
