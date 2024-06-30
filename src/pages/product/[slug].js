@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useCart } from "@/hooks/cartContext";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function DetailProduct() {
 	const { addToCart } = useCart();
@@ -13,6 +14,7 @@ export default function DetailProduct() {
 	const { slug } = router.query;
 	const [product, setProduct] = useState(null);
 	const [loading, setLoading] = useState(true);
+	const { toast } = useToast();
 
 	useEffect(() => {
 		if (slug) {
@@ -38,11 +40,15 @@ export default function DetailProduct() {
 			quantity: 1,
 			slug: product.slug,
 		});
+		toast({
+			title: "Success",
+			description: `${product.name}  has been added to your cart`,
+		});
 	};
 
 	return (
 		<>
-			<div className='bg-white'>
+			<div>
 				<div className='mx-auto max-w-screen-xl px-4 md:px-8'>
 					<div className='grid gap-8 md:grid-cols-2'>
 						{loading ? (
@@ -92,13 +98,10 @@ export default function DetailProduct() {
 
 									<div className='flex gap-2.5'>
 										<button
-											className='w-full h-12 rounded-md bg-zinc-500 text-2xl font-medium text-white'
+											className='w-full h-10 sm:w-full md:w-1/2 lg:w-1/7 flex flex-col justify-center items-center rounded-md bg-[#2F3645] text-2xl font-medium text-white hover:bg-[#666766]'
 											onClick={() => handleAddToCart()}
 										>
 											add to cart
-										</button>
-										<button className='w-full rounded-md bg-orange-500 text-2xl font-medium text-white'>
-											buy now
 										</button>
 									</div>
 

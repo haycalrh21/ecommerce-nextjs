@@ -24,7 +24,7 @@ export default function NewProduct() {
 	}, []);
 
 	return (
-		<div className='bg-white'>
+		<div>
 			<div className='mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8'>
 				<div className='flex items-center justify-between'>
 					<h2 className='text-2xl font-bold tracking-tight text-gray-900'>
@@ -54,7 +54,7 @@ export default function NewProduct() {
 						  ))
 						: products.map((product) => (
 								<div key={product._id} className='group relative'>
-									<div className='aspect-square w-full overflow-hidden rounded-md bg-gray-200 group-hover:opacity-75 lg:h-80'>
+									<div className=' border-4 border-black aspect-square w-full overflow-hidden rounded-md group-hover:opacity-75 lg:h-80 '>
 										<Link href={`/product/${product.slug}`}>
 											{product.images.length > 0 && (
 												<img

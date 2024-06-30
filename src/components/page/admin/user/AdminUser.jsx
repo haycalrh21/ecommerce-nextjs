@@ -29,24 +29,26 @@ export default function AdminUser() {
 		<AdminDashboard>
 			<div>
 				<h1>Admin User</h1>
-				<div>
-					<table>
+
+				<div className='overflow-x-auto'>
+					<table className='min-w-full bg-white'>
 						<thead>
-							<tr>
-								<th>Name</th>
-								<th>Email</th>
-								<th>Role</th>
-								<th>Action</th>
+							<tr className='bg-gray-200 text-gray-600 uppercase text-sm leading-normal'>
+								<th className='py-3 px-6 text-left'>Name</th>
+								<th className='py-3 px-6 text-left'>Email</th>
+								<th className='py-3 px-6 text-left'>role</th>
+								<th className='py-3 px-6 text-left'>action</th>
 							</tr>
 						</thead>
-						<tbody>
+						<tbody className='text-gray-600 text-sm font-light'>
 							{users.map((user) => (
-								<tr key={user._id}>
-									<td>{user.name}</td>
-									<td>{user.email}</td>
-									<td>{user.role}</td>
-									<td>Delete</td>{" "}
-									{/* Tambahkan fungsi delete jika diperlukan */}
+								<tr
+									key={user._id}
+									className='border-b border-gray-200 hover:bg-gray-100'
+								>
+									<td className='py-3 px-6 text-left'>{user.name}</td>
+									<td className='py-3 px-6 text-left'>{user.email}</td>
+									<td className='py-3 px-6 text-left'>{user.role}</td>
 								</tr>
 							))}
 						</tbody>

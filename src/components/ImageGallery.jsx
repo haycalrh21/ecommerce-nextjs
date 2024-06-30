@@ -13,11 +13,14 @@ export default function ImageGallery({ images }) {
 		<div className='grid gap-4 lg:grid-cols-5 mt-20'>
 			<div className='order-last flex gap-4 lg:order-none lg:flex-col'>
 				{images.map((image, idx) => (
-					<div key={idx} className='overflow-hidden rounded-lg bg-gray-100'>
+					<div
+						key={idx}
+						className='overflow-hidden rounded-lg border-4 border-black'
+					>
 						<Image
 							src={image}
-							width={200}
-							height={200}
+							width={100}
+							height={100}
 							alt='photo'
 							className='h-full w-full cursor-pointer object-cover object-center'
 							onClick={() => handleSmallImageClick(image)}
@@ -26,7 +29,7 @@ export default function ImageGallery({ images }) {
 				))}
 			</div>
 
-			<div className='relative overflow-hidden rounded-lg bg-gray-100 lg:col-span-4'>
+			<div className='relative overflow-hidden rounded-lg border-4 border-black lg:col-span-4'>
 				<Image
 					src={bigImage}
 					alt='Photo'

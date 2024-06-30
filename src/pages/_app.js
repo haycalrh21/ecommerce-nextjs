@@ -5,6 +5,7 @@ import "@/styles/globals.css";
 import { CartProvider } from "@/hooks/cartContext";
 import { SessionProvider } from "next-auth/react";
 import { useRouter } from "next/router";
+import { Toaster } from "@/components/ui/toaster";
 
 const disableNavbar = ["admin", "login", "register"];
 
@@ -19,8 +20,9 @@ export default function App({ Component, pageProps, session }) {
 			{/* <UserProvider> */}
 			<CartProvider>
 				{!shouldDisableNavbar && <Navbar />}
-				<div>
+				<div className='min-h-screen bg-[#EEEDEB]'>
 					<Component {...pageProps} />
+					<Toaster />
 				</div>
 			</CartProvider>
 			{/* </UserProvider> */}
