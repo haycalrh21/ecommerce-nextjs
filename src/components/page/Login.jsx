@@ -3,15 +3,18 @@ import { getSession, signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from "next/link";
+import Spinner from "../ui/spinner/Spinner";
 
 export default function Login() {
 	const router = useRouter();
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [error, setError] = useState("");
+	const [loading, setLoading] = useState(false); // State untuk loading
 
 	const handleSubmit = async (event) => {
 		event.preventDefault();
+		setLoading(true); // Set loading true saat mulai submit
 
 		try {
 			const result = await signIn("credentials", {
@@ -23,6 +26,7 @@ export default function Login() {
 			if (result.error) {
 				console.error("Login failed:", result.error);
 				setError("Login failed. Please check your credentials and try again.");
+				setLoading(false); // Set loading false setelah login gagal
 			} else {
 				// Ambil session setelah login berhasil
 				const session = await getSession();
@@ -38,6 +42,7 @@ export default function Login() {
 		} catch (error) {
 			console.error("Login error:", error);
 			setError("Error during login. Please try again later.");
+			setLoading(false); // Set loading false jika terjadi error
 		}
 	};
 
@@ -121,9 +126,15 @@ export default function Login() {
 						<div>
 							<button
 								type='submit'
-								className='w-full bg-black flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary'
+								disabled={loading} // Disable button saat loading
+								className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
+									loading
+										? "bg-gray-400 cursor-not-allowed"
+										: "bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+								}`}
 							>
-								Sign in
+								{loading ? <Spinner /> : "Sign in"}{" "}
+								{/* Tampilkan Spinner jika loading */}
 							</button>
 							<p className='mt-4'>
 								<Link
