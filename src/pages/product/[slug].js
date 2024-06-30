@@ -2,16 +2,38 @@
 
 import ImageGallery from "@/components/ImageGallery";
 import { Star, Truck } from "lucide-react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useCart } from "@/hooks/cartContext";
 
-export default function DetailProduct({ product }) {
+export default function DetailProduct() {
 	const { addToCart } = useCart();
 	const router = useRouter();
+	const { slug } = router.query;
+	const [product, setProduct] = useState(null);
+	const [loading, setLoading] = useState(true);
 
-	if (router.isFallback) {
+	useEffect(() => {
+		if (slug) {
+			fetch(`/api/product/${slug}`)
+				.then((res) => res.json())
+				.then((data) => {
+					setProduct(data);
+					setLoading(false);
+				})
+				.catch((error) => {
+					console.error("Error fetching product:", error);
+					setLoading(false);
+				});
+		}
+	}, [slug]);
+
+	if (loading) {
 		return <div>Loading...</div>;
+	}
+
+	if (!product) {
+		return <div>Product not found</div>;
 	}
 
 	const handleAddToCart = () => {
@@ -79,44 +101,4 @@ export default function DetailProduct({ product }) {
 			</div>
 		</>
 	);
-}
-
-export async function getStaticPaths() {
-	try {
-		const res = await fetch("/api/product/getproduct");
-		const products = await res.json();
-
-		const paths = products.map((product) => ({
-			params: { slug: product.slug },
-		}));
-
-		return {
-			paths,
-			fallback: true,
-		};
-	} catch (error) {
-		console.error("Error fetching products:", error);
-		return {
-			paths: [],
-			fallback: true,
-		};
-	}
-}
-
-export async function getStaticProps({ params }) {
-	try {
-		const res = await fetch(`/api/product/${params.slug}`);
-		const product = await res.json();
-
-		return {
-			props: { product },
-			revalidate: 60,
-		};
-	} catch (error) {
-		console.error("Error fetching product:", error);
-		return {
-			props: { product: null },
-			revalidate: 60,
-		};
-	}
 }
