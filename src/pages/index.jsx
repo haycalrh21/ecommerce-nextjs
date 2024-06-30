@@ -8,14 +8,11 @@ const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
 	return (
-		<>
-			{/* <Navbar /> */}
+		<div className='md:w-4/5 mx-auto py-10 px-6'>
 			<div>
-				<div>
-					<Hero />
-					<NewProduct />
-				</div>
+				<Hero />
+				<NewProduct />
 			</div>
-		</>
+		</div>
 	);
 }

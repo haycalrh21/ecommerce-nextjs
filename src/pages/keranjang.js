@@ -7,11 +7,11 @@ const Keranjang = () => {
 	const { cart, removeFromCart } = useCart();
 
 	return (
-		<div className='min-h-screen bg-gray-100 py-10'>
+		<div className='md:w-4/5 mx-auto py-10 px-6  py-10'>
 			<div className='container mx-auto px-4'>
 				<h1 className='text-2xl font-bold mb-5'>Keranjang Belanja</h1>
 				<div className='flex flex-col md:flex-row gap-4'>
-					<div className='w-full md:w-2/3'>
+					<div className='w-full md:w-5/5'>
 						{cart.length > 0 ? (
 							cart.map((item, index) => (
 								<div
@@ -25,22 +25,25 @@ const Keranjang = () => {
 									/>
 									<div className='flex-1'>
 										<h2 className='text-lg font-semibold'>{item.name}</h2>
-										<p>Quantity: {item.quantity}</p>
-										<p>Price:{item.price}</p>
+										<p>Jumlah: {item.quantity}</p>
+										<p>Price: Rp{item.price.toLocaleString()}</p>
 									</div>
 									<button
 										onClick={() => removeFromCart(item.id)}
-										className='text-red-500 hover:text-red-700 ml-5'
+										className=' bg-black text-white p-2 hover:bg-red-600 ml-5 rounded-md'
 									>
-										Remove
+										Kurangi jumlah
 									</button>
 								</div>
 							))
 						) : (
-							<div className='text-center'>
-								<p>
+							<div>
+								<p className='text-lg font-semibold text-center justify-center'>
 									Keranjang Anda kosong. Mulai berbelanja{" "}
-									<Link href='/shop'>klik disini</Link>.
+									<Link href='/products' className='block  hover:underline '>
+										klik disini
+									</Link>
+									.
 								</p>
 							</div>
 						)}

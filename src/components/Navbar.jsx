@@ -12,27 +12,8 @@ export default function Navbar() {
 	const router = useRouter();
 	const { cart } = useCart();
 
-	const handleLogout = async () => {
-		try {
-			await axios.get(
-				`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/auth/logout`,
-				{
-					withCredentials: true,
-				}
-			);
-			mutate(null, false); // Mutate dengan null untuk menghapus user dari state
-			router.push("/logiin");
-		} catch (error) {
-			// console.error(error.response ? error.response.data : error.message);
-			alert("Logout failed");
-		}
-	};
-	const handleLogin = () => {
-		router.push("/logiin");
-	};
-
 	return (
-		<nav className='w-full mx-auto fixed bg-zinc-500 z-30 py-2 md:px-0 duration-200'>
+		<nav className='w-full mx-auto sticky bg-zinc-500 z-30 py-2 md:px-0 duration-200'>
 			<div className='px-2 navtop relative max-w-6xl mx-auto flex justify-between place-items-center py-1.5'>
 				<div className='burger flex items-center'>
 					<h3 className='hidden md:inline text-md mr-2 font-semibold ml-3 text-cusblack'>
@@ -138,16 +119,8 @@ export default function Navbar() {
 							</button>
 						)}
 					</div>
-					{/* <button
-						className='w-8 relative flex items-center h-8 rounded-full hover:bg-gray-200 active:bg-gray-300 cursor-pointer duration-200'
-						onClick={() => (data ? signOut() : signIn())}
-					>
-						{data ? "Logout" : "Login"}
-					</button> */}
 				</div>
 			</div>
-
-			{/* <MenuNav handleOpen={handleOpen} isOpen={isOpen} /> */}
 		</nav>
 	);
 }

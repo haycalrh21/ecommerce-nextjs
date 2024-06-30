@@ -12,7 +12,9 @@
 		"axios": "^1.7.2",
 		"bcrypt": "^5.1.1",
 		"bcryptjs": "^2.4.3",
+		"class-variance-authority": "^0.7.0",
 		"cloudinary": "^2.2.0",
+		"clsx": "^2.1.1",
 		"feather-icons": "^4.29.2",
 		"framer-motion": "^11.2.10",
 		"jsonwebtoken": "^9.0.2",
@@ -26,7 +28,9 @@
 		"react": "^18",
 		"react-dom": "^18",
 		"react-number-format": "^5.4.0",
-		"swr": "^2.2.5"
+		"swr": "^2.2.5",
+		"tailwind-merge": "^2.3.0",
+		"tailwindcss-animate": "^1.0.7"
 	},
 	"devDependencies": {
 		"eslint": "^8",

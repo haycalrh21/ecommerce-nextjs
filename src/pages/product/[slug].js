@@ -56,9 +56,9 @@ export default function DetailProduct() {
 
 						<div className='md:py-8 mt-12'>
 							<div className='mb-2 md:mb-3'>
-								<span className='mb-0.5 inline-block text-gray-500'>
+								{/* <span className='mb-0.5 inline-block text-gray-500'>
 									{product.category}
-								</span>
+								</span> */}
 								<h2 className='text-2xl font-bold text-gray-800 lg:text-3xl'>
 									{product.name}
 								</h2>

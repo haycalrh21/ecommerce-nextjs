@@ -1,9 +1,24 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { products } from "@/lib/data";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function productsAll() {
+export default function ProductsAll() {
+	const [products, setProducts] = useState([]);
+
+	const dataProduct = async () => {
+		try {
+			const response = await fetch("/api/product/getproduct");
+			const data = await response.json();
+			setProducts(data);
+		} catch (error) {
+			console.error("Error fetching data:", error);
+		}
+	};
+
+	useEffect(() => {
+		dataProduct();
+	}, []);
 	return (
 		<>
 			<div className='bg-white '>
@@ -18,13 +33,18 @@ export default function productsAll() {
 						{products.map((product) => (
 							<div key={product._id} className='group relative'>
 								<div className='aspect-square w-full overflow-hidden rounded-md bg-gray-200 group-hover:opacity-75 lg:h-80'>
-									<Image
-										src={product.imageUrl}
-										alt='Product image'
-										className='h-full w-full object-cover object-center lg:h-full lg:w-full'
-										width={300}
-										height={300}
-									/>
+									<Link href={`/product/${product.slug}`}>
+										{product.images.map((image) => (
+											<Image
+												key={image}
+												src={image}
+												alt='Product image'
+												className='h-full w-full object-cover object-center lg:h-full lg:w-full'
+												width={300}
+												height={300}
+											/>
+										))}
+									</Link>
 								</div>
 
 								<div className='mt-4 flex justify-between'>
@@ -39,7 +59,7 @@ export default function productsAll() {
 										</p>
 									</div>
 									<p className='text-sm font-medium text-gray-900'>
-										${product.price}
+										Rp{product.price}
 									</p>
 								</div>
 							</div>

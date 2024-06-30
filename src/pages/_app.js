@@ -19,7 +19,7 @@ export default function App({ Component, pageProps, session }) {
 			{/* <UserProvider> */}
 			<CartProvider>
 				{!shouldDisableNavbar && <Navbar />}
-				<div className='md:w-3/5 mx-auto py-10 px-6'>
+				<div>
 					<Component {...pageProps} />
 				</div>
 			</CartProvider>
