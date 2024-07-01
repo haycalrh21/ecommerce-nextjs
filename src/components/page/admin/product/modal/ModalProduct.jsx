@@ -9,6 +9,7 @@ export default function NewProductModal({ isOpen, onClose }) {
 		slug: "",
 		price: "",
 		stock: "",
+		description: "",
 		images: [],
 	});
 
@@ -72,6 +73,7 @@ export default function NewProductModal({ isOpen, onClose }) {
 				slug: "",
 				price: "",
 				stock: "",
+				description: "",
 				images: [],
 			});
 			setImagePreviews([]);
@@ -194,6 +196,24 @@ export default function NewProductModal({ isOpen, onClose }) {
 										type='number'
 										placeholder='Enter stock'
 										value={formData.stock}
+										onChange={handleChange}
+										required
+										className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
+									/>
+								</div>
+								<div>
+									<label
+										htmlFor='Description'
+										className='block text-sm font-medium text-gray-700'
+									>
+										Description
+									</label>
+									<textarea
+										id='description'
+										name='description'
+										type='text'
+										placeholder='Enter description'
+										value={formData.description}
 										onChange={handleChange}
 										required
 										className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm'

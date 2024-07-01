@@ -1,5 +1,4 @@
 import { useCart } from "@/hooks/cartContext";
-
 import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -20,13 +19,15 @@ import { Button } from "./ui/button";
 
 export default function Navbar() {
 	const { data } = useSession();
-	// console.log(session);
-
 	const { cart } = useCart();
 	const [isClick, setisClick] = useState(false);
 
 	const toggleNavbar = () => {
 		setisClick(!isClick);
+	};
+
+	const closeNavbar = () => {
+		setisClick(false);
 	};
 
 	return (
@@ -37,7 +38,6 @@ export default function Navbar() {
 						<div className='flex-shrink-0' style={{ color: "#E2DFD0" }}>
 							<Link href='/' className='flex items-center gap-4'>
 								<Image src='/logo.png' alt='Logo' width={80} height={40} />
-
 								<span>Toko Xyz</span>
 							</Link>
 						</div>
@@ -73,17 +73,15 @@ export default function Navbar() {
 							<DropdownMenu>
 								<DropdownMenuTrigger>
 									<Avatar>
-										{data?.user.image ? ( // Jika pengguna sudah login dan memiliki foto profil
+										{data?.user.image ? (
 											<AvatarImage src={data.user.image} />
-										) : data?.user ? ( // Jika pengguna sudah login tetapi tidak memiliki foto profil
-											// Tampilkan avatar default secara acak
+										) : data?.user ? (
 											<img
 												src='/male.png'
 												alt='Default Avatar'
 												className='w-10 h-10'
 											/>
 										) : (
-											// Jika pengguna belum login
 											<Users
 												className='w-10 h-10 rounded-md'
 												style={{ stroke: "#EEEDEB" }}
@@ -98,7 +96,7 @@ export default function Navbar() {
 										</DropdownMenuLabel>
 									) : (
 										<DropdownMenuLabel
-											onClick={() => (window.location.href = "/auth/register")}
+											onClick={() => (window.location.href = "/register")}
 											className='cursor-pointer hover:text-red-500'
 										>
 											Register
@@ -106,7 +104,10 @@ export default function Navbar() {
 									)}
 									<DropdownMenuLabel
 										className='cursor-pointer hover:text-red-400'
-										onClick={() => (data ? signOut() : signIn())}
+										onClick={() => {
+											closeNavbar(); // Menutup dropdown saat Logout/Login diklik
+											data ? signOut() : signIn();
+										}}
 									>
 										{data ? "Log Out" : "Login"}
 									</DropdownMenuLabel>
@@ -157,24 +158,42 @@ export default function Navbar() {
 					<div className='md:hidden'>
 						<div className='px-2 pt-2 pb-3 space-y-1 sm:px-3'>
 							<div className='text-white hover:bg-white hover:text-black rounded-lg p-1'>
-								<Button className='bg-white text-black hover:bg-white hover:text-black rounded-lg p-1 w-full'>
-									<Link href='/products'>Product</Link>
-								</Button>
+								<Link href='/products'>
+									<Button
+										className='bg-white text-black hover:bg-white hover:text-black rounded-lg p-1 w-full'
+										onClick={closeNavbar} // Menutup dropdown saat Produk diklik
+									>
+										Product
+									</Button>
+								</Link>
 							</div>
 							<div className='text-white hover:bg-white hover:text-black rounded-lg p-1'>
-								<Button className='bg-white text-black hover:bg-white hover:text-black rounded-lg p-1 w-full'>
-									<Link href='/keranjang'>Keranjang</Link>
-								</Button>
+								<Link href='/keranjang'>
+									<Button
+										className='bg-white text-black hover:bg-white hover:text-black rounded-lg p-1 w-full'
+										onClick={closeNavbar} // Menutup dropdown saat Keranjang diklik
+									>
+										Keranjang
+									</Button>
+								</Link>
 							</div>
 							<div className='text-white hover:bg-white hover:text-black rounded-lg p-1'>
-								<Button className='bg-white text-black hover:bg-white hover:text-black rounded-lg p-1 w-full'>
-									<Link href='/dashboard'>Dashboard</Link>
-								</Button>
+								<Link href='/dashboard'>
+									<Button
+										className='bg-white text-black hover:bg-white hover:text-black rounded-lg p-1 w-full'
+										onClick={closeNavbar} // Menutup dropdown saat Dashboard diklik
+									>
+										Dashboard
+									</Button>
+								</Link>
 							</div>
 							<div className='text-white hover:bg-white hover:text-black rounded-lg p-1'>
 								<Button
 									className='bg-white text-black hover:bg-white hover:text-black rounded-lg p-1 w-full'
-									onClick={() => (data ? signOut() : signIn())}
+									onClick={() => {
+										closeNavbar(); // Menutup dropdown saat Logout/Login diklik
+										data ? signOut() : signIn();
+									}}
 								>
 									{data ? "Log Out" : "Login"}
 								</Button>

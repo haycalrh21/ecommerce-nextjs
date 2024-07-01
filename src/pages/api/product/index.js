@@ -7,7 +7,8 @@ export default async function handler(req, res) {
 
 	if (req.method === "POST") {
 		// Handle product creation
-		const { name, category, slug, price, stock, images } = req.body;
+		const { name, category, slug, price, stock, images, description } =
+			req.body;
 
 		try {
 			const uploadResponses = await Promise.all(
@@ -23,6 +24,7 @@ export default async function handler(req, res) {
 				slug,
 				price,
 				stock,
+				description,
 				images: imageUrls,
 			});
 			await product.save();

@@ -43,6 +43,9 @@ export default function DetailProduct() {
 		toast({
 			title: "Success",
 			description: `${product.name}  has been added to your cart`,
+			duration: 3000,
+			variant: "success",
+			descripton: `href='/keranjang'`,
 		});
 	};
 
@@ -85,10 +88,13 @@ export default function DetailProduct() {
 											</span>
 										</div>
 
-										<div className='mt-4'>
-											{/* ukuran */}
+										<p className='mt-12 text-base tracking-wide text-gray-500'>
+											{product.description}
+										</p>
+										{/* ukuran */}
+										{/* <div className='mt-4'>
 											<button className=' bg-black mr-2 duration-200 flex place-items-center justify-center rounded-full w-12 h-12 cursor-pointer hover:bg-cusblack hover:text-white'></button>
-										</div>
+										</div> */}
 									</div>
 
 									<div className='mb-6 flex items-center gap-2 text-gray-500'>
@@ -104,10 +110,6 @@ export default function DetailProduct() {
 											add to cart
 										</button>
 									</div>
-
-									<p className='mt-12 text-base tracking-wide text-gray-500'>
-										{product.description}
-									</p>
 								</div>
 							</>
 						)}

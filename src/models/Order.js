@@ -33,10 +33,15 @@ const orderSchema = new mongoose.Schema(
 			enum: ["sudah bayar", "belum bayar"],
 			default: "belum bayar",
 		},
+		jumlahBayar: {
+			type: Number,
+			required: true,
+		},
 	},
 	{ timestamps: true }
 );
 
+// Membuat model Order dari schema
 const Order = mongoose.models.Order || mongoose.model("Order", orderSchema);
 
 export default Order;

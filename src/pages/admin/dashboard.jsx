@@ -1,4 +1,4 @@
-import { AdminDashboard } from "@/components/page/admin/AdminLayout";
+import AdminDashboard from "@/components/page/admin/dashboard/AdminDashboard";
 
 import { useSession } from "next-auth/react";
 

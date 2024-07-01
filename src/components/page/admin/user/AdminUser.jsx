@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { AdminDashboard } from "../AdminLayout";
+import { AdminDashboard, AdminLayout } from "../AdminLayout";
 import { useSession } from "next-auth/react";
 
 export default function AdminUser() {
@@ -26,7 +26,7 @@ export default function AdminUser() {
 	if (!session) return <p>Please log in</p>;
 
 	return (
-		<AdminDashboard>
+		<AdminLayout>
 			<div>
 				<h1>Admin User</h1>
 
@@ -55,6 +55,6 @@ export default function AdminUser() {
 					</table>
 				</div>
 			</div>
-		</AdminDashboard>
+		</AdminLayout>
 	);
 }

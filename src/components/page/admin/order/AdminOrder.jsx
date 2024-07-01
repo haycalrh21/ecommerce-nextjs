@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { AdminDashboard } from "../AdminLayout";
+import { AdminDashboard, AdminLayout } from "../AdminLayout";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 
@@ -43,7 +43,7 @@ export default function AdminOrder() {
 		return new Date(utcDateString).toLocaleString("en-ID", options);
 	};
 	return (
-		<AdminDashboard>
+		<AdminLayout>
 			<h1>Admin Orders</h1>
 			<div className='overflow-x-auto'>
 				<table className='min-w-full bg-white'>
@@ -96,6 +96,6 @@ export default function AdminOrder() {
 					</tbody>
 				</table>
 			</div>
-		</AdminDashboard>
+		</AdminLayout>
 	);
 }

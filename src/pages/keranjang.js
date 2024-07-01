@@ -1,18 +1,23 @@
 import { useCart } from "@/hooks/cartContext";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import React, { useState, useEffect } from "react";
 
 const Keranjang = () => {
 	const { data: session, status } = useSession();
 	const { cart, removeFromCart, clearCart } = useCart();
 	const [checkoutStep, setCheckoutStep] = useState(1);
+	const router = useRouter();
 	const [formData, setFormData] = useState({
 		name: "",
 		email: "",
 		address: "",
 		phone: "",
+		jumlahBayar: 0, // tambahkan jumlahBayar di sini
 	});
+
+	const [totalAmount, setTotalAmount] = useState(0); // State untuk jumlahBayar
 
 	// Update formData.email when session changes
 	useEffect(() => {
@@ -23,6 +28,15 @@ const Keranjang = () => {
 			}));
 		}
 	}, [session]);
+
+	// Hitung jumlahBayar saat keranjang berubah
+	useEffect(() => {
+		const amount = cart.reduce(
+			(total, item) => total + item.price * item.quantity,
+			0
+		);
+		setTotalAmount(amount);
+	}, [cart]);
 
 	const handleCheckout = () => {
 		setCheckoutStep(2);
@@ -35,10 +49,17 @@ const Keranjang = () => {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
+		// Hitung jumlahBayar
+		const amount = cart.reduce(
+			(total, item) => total + item.price * item.quantity,
+			0
+		);
+
 		// Gabungkan data keranjang dengan data form
 		const orderData = {
 			...formData,
 			cartItems: cart,
+			jumlahBayar: amount, // Masukkan jumlahBayar ke orderData
 		};
 
 		fetch("/api/checkout", {
@@ -50,8 +71,17 @@ const Keranjang = () => {
 		})
 			.then((response) => response.json())
 			.then((data) => {
-				// console.log("Success:", data);
 				clearCart(); // Kosongkan keranjang setelah berhasil
+				// Reset form
+				setFormData({
+					name: "",
+					email: session?.user?.email || "",
+					address: "",
+					phone: "",
+					jumlahBayar: 0, // Reset jumlahBayar setelah submit
+				});
+				// Kembali ke langkah pertama setelah submit
+				router.push("/dashboard");
 			})
 			.catch((error) => {
 				console.error("Error:", error);
@@ -59,17 +89,6 @@ const Keranjang = () => {
 
 		// Kosongkan keranjang setelah submit
 		clearCart();
-
-		// Reset form
-		setFormData({
-			name: "",
-			email: session?.user?.email || "",
-			address: "",
-			phone: "",
-		});
-
-		// Kembali ke langkah pertama setelah submit
-		setCheckoutStep(1);
 	};
 
 	return (
@@ -145,6 +164,17 @@ const Keranjang = () => {
 											)
 											.toLocaleString()}
 									</p>
+								</div>
+								<div className='mb-2'>
+									<label className='block text-sm font-medium text-gray-700'>
+										Jumlah Bayar
+									</label>
+									<input
+										type='text'
+										readOnly
+										value={`Rp ${totalAmount.toLocaleString()}`}
+										className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm bg-gray-100'
+									/>
 								</div>
 								<button
 									className='w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600'

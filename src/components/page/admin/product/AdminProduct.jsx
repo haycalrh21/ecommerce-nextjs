@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { AdminDashboard } from "../AdminLayout";
+import { AdminDashboard, AdminLayout } from "../AdminLayout";
 import NewProductModal from "./modal/ModalProduct";
 import axios from "axios";
 
@@ -63,35 +63,40 @@ export default function AdminProducts() {
 	};
 
 	return (
-		<AdminDashboard>
+		<AdminLayout>
 			<div>
 				<div>
-					<h2>Our Products</h2>
-					<Button onClick={openModal}>Add New Product</Button>
+					<Button onClick={openModal} className='mb-4'>
+						Add New Product
+					</Button>
 				</div>
 
 				{loading ? (
 					<div>
-						<p>Loading...</p>
+						<p className='text-center'>Loading...</p>
 					</div>
 				) : (
 					<div>
-						<div>
-							<table>
+						<div className='overflow-x-auto'>
+							<table className='min-w-full bg-white'>
 								<thead>
-									<tr>
-										<th>Image</th>
-										<th>Name</th>
-										<th>Category</th>
-										<th>Price</th>
-										<th>Stock</th>
-										<th>Actions</th>
+									<tr className='bg-gray-200 text-gray-600 uppercase text-sm leading-normal'>
+										<th className='py-3 px-6 text-left'>Image</th>
+										<th className='py-3 px-6 text-left'>Name</th>
+										<th className='py-3 px-6 text-left'>Category</th>
+										<th className='py-3 px-6 text-left'>Price</th>
+										<th className='py-3 px-6 text-left'>Stock</th>
+										<th className='py-3 px-6 text-left'>Description</th>
+										<th className='py-3 px-6 text-left'>action</th>
 									</tr>
 								</thead>
-								<tbody>
+								<tbody className='text-gray-600 text-sm font-light'>
 									{products.map((product) => (
-										<tr key={product._id}>
-											<td>
+										<tr
+											key={product._id}
+											className='border-b border-gray-200 hover:bg-gray-100'
+										>
+											<td className='py-3 px-6 text-left'>
 												{product.images.length > 0 && (
 													<img
 														src={product.images[0]}
@@ -104,17 +109,30 @@ export default function AdminProducts() {
 													/>
 												)}
 											</td>
-											<td>{product.name}</td>
-											<td>{product.category}</td>
-											<td>Rp{product.price}</td>
-											<td>{product.stock}</td>
-											<td>
-												<Button onClick={() => editProduct(product._id)}>
-													Edit
-												</Button>
-												<Button onClick={() => deleteProduct(product._id)}>
-													Delete
-												</Button>
+											<td className='py-3 px-6 text-left'>{product.name}</td>
+											<td className='py-3 px-6 text-left'>
+												{product.category}
+											</td>
+											<td className='py-3 px-6 text-left'>{product.price}</td>
+											<td className='py-3 px-6 text-left'>{product.stock}</td>
+											<td className='py-3 px-6 text-left'>
+												{product.description}
+											</td>
+											<td className='py-3 px-6 text-left'>
+												<div className='flex flex-col sm:flex-row lg:flex-col lg:items-start'>
+													<Button
+														onClick={() => editProduct(product._id)}
+														className='w-full sm:w-1/2 lg:w-full mr-0 sm:mr-2 lg:mr-0 mb-2 sm:mb-0 lg:mb-2 hover:bg-yellow-500'
+													>
+														Edit
+													</Button>
+													<Button
+														onClick={() => deleteProduct(product._id)}
+														className='w-full sm:w-1/2 lg:w-full hover:bg-red-500'
+													>
+														Delete
+													</Button>
+												</div>
 											</td>
 										</tr>
 									))}
@@ -125,6 +143,6 @@ export default function AdminProducts() {
 				)}
 				<NewProductModal isOpen={isModalOpen} onClose={closeModal} />
 			</div>
-		</AdminDashboard>
+		</AdminLayout>
 	);
 }

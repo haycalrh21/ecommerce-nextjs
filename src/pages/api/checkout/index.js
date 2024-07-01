@@ -1,7 +1,6 @@
-// pages/api/order.js
+// api/checkout
 
 import db from "@/lib/mongodb";
-
 import Order from "@/models/Order";
 
 export default async function handler(req, res) {
@@ -12,9 +11,17 @@ export default async function handler(req, res) {
 	switch (method) {
 		case "POST":
 			try {
-				const { name, email, phone, address, cartItems } = req.body;
+				const { name, email, phone, address, cartItems, jumlahBayar } =
+					req.body;
 
-				if (!name || !email || !phone || !address || !cartItems) {
+				if (
+					!name ||
+					!email ||
+					!phone ||
+					!address ||
+					!cartItems ||
+					!jumlahBayar
+				) {
 					return res
 						.status(400)
 						.json({ success: false, error: "Data order tidak lengkap" });
@@ -26,6 +33,7 @@ export default async function handler(req, res) {
 					phone,
 					address,
 					cartItems,
+					jumlahBayar,
 				});
 
 				const savedOrder = await order.save();
@@ -35,8 +43,35 @@ export default async function handler(req, res) {
 				res.status(400).json({ success: false, error: error.message });
 			}
 			break;
+		case "PUT":
+			try {
+				const { orderId, status } = req.body;
+
+				if (!orderId || !status) {
+					return res
+						.status(400)
+						.json({ success: false, error: "Data tidak lengkap" });
+				}
+
+				const updatedOrder = await Order.findOneAndUpdate(
+					{ _id: orderId },
+					{ status },
+					{ new: true }
+				);
+
+				if (!updatedOrder) {
+					return res
+						.status(404)
+						.json({ success: false, error: "Order tidak ditemukan" });
+				}
+
+				res.status(200).json({ success: true, data: updatedOrder });
+			} catch (error) {
+				res.status(400).json({ success: false, error: error.message });
+			}
+			break;
 		default:
-			res.setHeader("Allow", ["POST"]);
+			res.setHeader("Allow", ["POST", "PUT"]);
 			res.status(405).end(`Method ${method} Not Allowed`);
 	}
 }

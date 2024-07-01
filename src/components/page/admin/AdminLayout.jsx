@@ -24,10 +24,10 @@ import {
 	DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { signOut } from "next-auth/react";
-import { Children } from "react";
+
 import { Home } from "lucide-react";
 
-export function AdminDashboard({ children }) {
+export function AdminLayout({ children }) {
 	return (
 		<div className='grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]'>
 			<div className='hidden border-r bg-muted/40 md:block'>
@@ -187,7 +187,7 @@ export function AdminDashboard({ children }) {
 							</div>
 						</SheetContent>
 					</Sheet>
-					<form className='flex-1 ml-4'>
+					<form className='flex-1  ml-10 mr-10'>
 						<div className='relative'>
 							<SearchIcon className='absolute left-2.5 top-2.5 h-4 w-4 text-gray-400' />
 							<Input
@@ -197,7 +197,7 @@ export function AdminDashboard({ children }) {
 							/>
 						</div>
 					</form>
-					<DropdownMenu>
+					<DropdownMenu className='mb-20'>
 						<DropdownMenuTrigger asChild>
 							<Button variant='secondary' size='icon' className='rounded-full'>
 								<CircleUserIcon className='h-5 w-5' />
@@ -219,7 +219,7 @@ export function AdminDashboard({ children }) {
 						</DropdownMenuContent>
 					</DropdownMenu>
 				</header>
-				<main className='flex-1 p-4 lg:p-6'>{children}</main>
+				<main className='min-h-screen flex-1 p-4 lg:p-6'>{children}</main>
 			</div>
 			;
 		</div>
