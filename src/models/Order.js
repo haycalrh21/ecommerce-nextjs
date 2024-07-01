@@ -37,11 +37,14 @@ const orderSchema = new mongoose.Schema(
 			type: Number,
 			required: true,
 		},
+		token: {
+			type: String,
+			required: true,
+		},
 	},
 	{ timestamps: true }
 );
 
-// Membuat model Order dari schema
 const Order = mongoose.models.Order || mongoose.model("Order", orderSchema);
 
 export default Order;

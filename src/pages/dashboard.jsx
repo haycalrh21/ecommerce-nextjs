@@ -30,9 +30,7 @@ const Dashboard = () => {
 	};
 
 	useEffect(() => {
-		// Fetch transactions on initial load
-
-		// Fetch orders when session changes
+		// Fetch orders when session changes or on initial load
 		if (session) {
 			fetchOrders();
 		}
@@ -60,117 +58,57 @@ const Dashboard = () => {
 
 	const bayar = async (order) => {
 		try {
-			const response = await axios.post(
-				"/api/midtrans",
-				{
-					orderId: order._id,
-					customerDetails: {
-						first_name: session?.user?.name,
-						email: session?.user?.email,
-					},
-					item_details: order.cartItems.map((item) => ({
-						id: item._id,
-						name: item.name,
-						price: item.price,
-						quantity: item.quantity,
-					})),
-				},
-				{
-					headers: {
-						"Content-Type": "application/json",
-						Authorization:
-							"Basic " +
-							btoa(process.env.NEXT_PUBLIC_MIDTRANS_SERVER_KEY + ":"),
-					},
-				}
-			);
+			// Ensure Snap.js script is loaded
+			const snapScript = "https://app.sandbox.midtrans.com/snap/snap.js";
+			const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY;
 
-			const data = response.data;
+			if (!window.snap) {
+				const script = document.createElement("script");
+				script.src = snapScript;
+				script.setAttribute("data-client-key", clientKey);
+				script.async = true;
+				document.body.appendChild(script);
+			}
 
-			if (response.status === 200) {
+			// Initialize payment after Snap.js script is loaded
+			const paymentHandler = setInterval(() => {
 				if (window.snap) {
-					window.snap.pay(data.token, {
-						onSuccess: async function (result) {
-							const grossAmount = order.cartItems.reduce(
-								(total, item) => total + item.price * item.quantity,
-								0
+					clearInterval(paymentHandler);
+
+					// Proceed with payment using Snap.js
+					window.snap.pay(order.token, {
+						onSuccess: async (result) => {
+							console.log("Payment success:", result);
+
+							// Update order status to 'sudah bayar'
+							await axios.put(
+								"/api/checkout",
+								{
+									orderId: order._id,
+									status: "sudah bayar",
+								},
+								{
+									headers: {
+										Authorization: `Bearer ${session.accessToken}`,
+									},
+								}
 							);
 
-							try {
-								await axios.post(
-									"/api/transaction",
-									{
-										orderId: order._id,
-										userId: session?.user?.name,
-										paymentMethod: "Midtrans",
-										grossAmount: grossAmount,
-										status: "sudah bayar", // Sesuaikan status transaksi sesuai kebutuhan
-									},
-									{
-										headers: {
-											"Content-Type": "application/json",
-										},
-									}
-								);
-
-								// Set status 'sudah bayar' pada pesanan menggunakan endpoint `api/checkout`
-								await axios.put(
-									"/api/checkout",
-									{
-										orderId: order._id,
-										status: "sudah bayar",
-									},
-									{
-										headers: {
-											"Content-Type": "application/json",
-										},
-									}
-								);
-
-								alert("Pembayaran berhasil!");
-								window.location.href = "/thanks";
-							} catch (error) {
-								console.error("Error saving transaction:", error);
-								alert("Terjadi kesalahan saat menyimpan transaksi!");
-							}
+							// Fetch updated orders
+							fetchOrders();
 						},
-						onError: function (result) {
-							console.error("Error during payment:", result);
-							alert("Pembayaran gagal!");
-						},
-						onClose: function () {
-							console.log("Snap popup closed");
+						onClose: () => {
+							console.log("Payment closed without completion");
+							// Handle when user closes the payment window without completing the payment
 						},
 					});
-				} else {
-					alert("Snap.js tidak ditemukan!");
 				}
-			} else {
-				alert(data.message || "Terjadi kesalahan!");
-			}
+			}, 500);
 		} catch (error) {
 			console.error("Error during payment:", error);
-			alert("Terjadi kesalahan saat pembayaran!");
+			// Handle error during payment if needed
 		}
 	};
-
-	useEffect(() => {
-		// Render Midtrans Snap token
-		const snapScript = "https://app.sandbox.midtrans.com/snap/snap.js";
-		const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY;
-
-		const script = document.createElement("script");
-		script.src = snapScript;
-		script.setAttribute("data-client-key", clientKey);
-		script.async = true;
-
-		document.body.appendChild(script);
-
-		return () => {
-			document.body.removeChild(script);
-		};
-	}, []);
-
 	return (
 		<div className='md:w-4/5 mx-auto py-10 px-6'>
 			<h1 className='text-2xl mb-4'>Welcome, {session?.user?.name}</h1>
@@ -186,13 +124,11 @@ const Dashboard = () => {
 									<tr className='bg-gray-200 text-gray-600 uppercase text-sm leading-normal'>
 										<th className='py-3 px-6 text-left'>Name</th>
 										<th className='py-3 px-6 text-left'>Actions</th>
-
 										<th className='py-3 px-6 text-left'>Status</th>
 										<th className='py-3 px-6 text-left'>Email</th>
 										<th className='py-3 px-6 text-left'>Phone</th>
 										<th className='py-3 px-6 text-left'>Address</th>
 										<th className='py-3 px-6 text-left'>Created At</th>
-										<th className='py-3 px-6 text-left'>Updated At</th>
 										<th className='py-3 px-6 text-left'>Items</th>
 									</tr>
 								</thead>
@@ -222,12 +158,9 @@ const Dashboard = () => {
 												{formatToLocalTime(order.createdAt)}
 											</td>
 											<td className='py-3 px-6 text-left'>
-												{formatToLocalTime(order.updatedAt)}
-											</td>
-											<td className='py-3 px-6 text-left'>
 												<ul>
 													{order.cartItems.map((item) => (
-														<li key={item._id}>
+														<li key={item.id}>
 															<Link
 																href={`/product/${item.slug}`}
 																className='hover:underline'

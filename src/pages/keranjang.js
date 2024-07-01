@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import React, { useState, useEffect } from "react";
 
 const Keranjang = () => {
-	const { data: session, status } = useSession();
+	const { data: session } = useSession();
 	const { cart, removeFromCart, clearCart } = useCart();
 	const [checkoutStep, setCheckoutStep] = useState(1);
 	const router = useRouter();
@@ -14,12 +14,10 @@ const Keranjang = () => {
 		email: "",
 		address: "",
 		phone: "",
-		jumlahBayar: 0, // tambahkan jumlahBayar di sini
 	});
 
-	const [totalAmount, setTotalAmount] = useState(0); // State untuk jumlahBayar
+	const [totalAmount, setTotalAmount] = useState(0);
 
-	// Update formData.email when session changes
 	useEffect(() => {
 		if (session?.user?.email) {
 			setFormData((prevFormData) => ({
@@ -29,7 +27,6 @@ const Keranjang = () => {
 		}
 	}, [session]);
 
-	// Hitung jumlahBayar saat keranjang berubah
 	useEffect(() => {
 		const amount = cart.reduce(
 			(total, item) => total + item.price * item.quantity,
@@ -38,59 +35,82 @@ const Keranjang = () => {
 		setTotalAmount(amount);
 	}, [cart]);
 
-	const handleCheckout = () => {
-		setCheckoutStep(2);
-	};
+	const handleCheckout = async (e) => {
+		e.preventDefault(); // Hindari pengiriman form secara default
 
-	const handleChange = (e) => {
-		const { name, value } = e.target;
-		setFormData({ ...formData, [name]: value });
-	};
-
-	const handleSubmit = (e) => {
-		e.preventDefault();
-		// Hitung jumlahBayar
 		const amount = cart.reduce(
 			(total, item) => total + item.price * item.quantity,
 			0
 		);
 
-		// Gabungkan data keranjang dengan data form
 		const orderData = {
 			...formData,
 			cartItems: cart,
-			jumlahBayar: amount, // Masukkan jumlahBayar ke orderData
+			jumlahBayar: amount,
 		};
 
-		fetch("/api/checkout", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify(orderData),
-		})
-			.then((response) => response.json())
-			.then((data) => {
-				clearCart(); // Kosongkan keranjang setelah berhasil
-				// Reset form
-				setFormData({
-					name: "",
-					email: session?.user?.email || "",
-					address: "",
-					phone: "",
-					jumlahBayar: 0, // Reset jumlahBayar setelah submit
-				});
-				// Kembali ke langkah pertama setelah submit
-				router.push("/dashboard");
-			})
-			.catch((error) => {
-				console.error("Error:", error);
+		try {
+			const response = await fetch("/api/midtrans", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(orderData),
 			});
 
-		// Kosongkan keranjang setelah submit
-		clearCart();
+			const data = await response.json();
+
+			if (data.token) {
+				window.snap.pay(data.token, {
+					onSuccess: function (result) {
+						console.log(result);
+						clearCart();
+						router.push("/dashboard");
+					},
+					onPending: function (result) {
+						console.log(result);
+						clearCart();
+						router.push("/dashboard");
+					},
+					onError: function (result) {
+						console.error(result);
+						clearCart();
+						router.push("/dashboard");
+					},
+					onClose: function () {
+						router.push("/dashboard");
+						clearCart();
+
+						console.log("Snap modal closed without finishing the payment");
+					},
+				});
+			}
+		} catch (error) {
+			console.error("Error:", error);
+		}
 	};
 
+	useEffect(() => {
+		const snapScript = "https://app.sandbox.midtrans.com/snap/snap.js";
+		const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY;
+
+		const script = document.createElement("script");
+		script.src = snapScript;
+		script.setAttribute("data-client-key", clientKey);
+		script.async = true;
+
+		document.body.appendChild(script);
+
+		return () => {
+			document.body.removeChild(script);
+		};
+	}, []);
+
+	const handleNextStep = () => {
+		// Logika untuk langkah selanjutnya dalam proses pembelian
+		// Misalnya, menampilkan formulir pengiriman atau konfirmasi pembelian
+		setCheckoutStep(2); // Contoh: Mengubah langkah checkout ke 2
+	};
 	return (
 		<div className='md:w-4/5 mx-auto py-10 px-6'>
 			<div className='container mx-auto px-4'>
@@ -178,7 +198,7 @@ const Keranjang = () => {
 								</div>
 								<button
 									className='w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600'
-									onClick={handleCheckout}
+									onClick={handleNextStep} // Ganti fungsi handleNextStep sesuai kebutuhan
 								>
 									Checkout
 								</button>
@@ -187,7 +207,7 @@ const Keranjang = () => {
 					</div>
 				) : (
 					<form
-						onSubmit={handleSubmit}
+						onSubmit={handleCheckout}
 						className='bg-white p-6 rounded-lg shadow-md'
 					>
 						<h2 className='text-lg font-semibold mb-4'>Data Diri</h2>
@@ -199,7 +219,9 @@ const Keranjang = () => {
 								type='text'
 								name='name'
 								value={formData.name}
-								onChange={handleChange}
+								onChange={(e) =>
+									setFormData({ ...formData, name: e.target.value })
+								}
 								className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
 								required
 							/>
@@ -212,7 +234,7 @@ const Keranjang = () => {
 								type='email'
 								name='email'
 								value={formData.email}
-								readOnly // Input email readonly
+								readOnly
 								className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
 								required
 							/>
@@ -224,7 +246,9 @@ const Keranjang = () => {
 							<textarea
 								name='address'
 								value={formData.address}
-								onChange={handleChange}
+								onChange={(e) =>
+									setFormData({ ...formData, address: e.target.value })
+								}
 								className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
 								required
 							/>
@@ -237,7 +261,9 @@ const Keranjang = () => {
 								type='text'
 								name='phone'
 								value={formData.phone}
-								onChange={handleChange}
+								onChange={(e) =>
+									setFormData({ ...formData, phone: e.target.value })
+								}
 								className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
 								required
 							/>

@@ -23,8 +23,6 @@ export default async function handler(req, res) {
 
 		await transaction.save();
 
-		console.log("Transaction saved successfully:", transaction);
-
 		res.status(201).json({ message: "Transaction saved successfully" });
 	} catch (error) {
 		console.error("Error saving transaction:", error);
