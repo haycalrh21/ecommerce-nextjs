@@ -1,5 +1,3 @@
-// api/checkout
-
 import db from "@/lib/mongodb";
 import Order from "@/models/Order";
 

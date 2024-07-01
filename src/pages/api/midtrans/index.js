@@ -55,15 +55,36 @@ export default async function handler(req, res) {
 
 			await newOrder.save();
 
-			// Send response with transaction token
-			res.status(200).json({ token: transaction.token });
+			// Send response with transaction token and order ID
+			res.status(200).json({ token: transaction.token, orderId: newOrder._id });
 		} catch (error) {
 			console.error("Error creating transaction or saving order:", error);
 			res
 				.status(500)
 				.json({ message: "Error creating transaction or saving order", error });
 		} finally {
-			// Ensure database connection is closed
+		}
+	} else if (req.method === "PUT") {
+		const { orderId, status } = req.body;
+
+		try {
+			// Update order status in the database
+			await db.connect();
+			const updatedOrder = await Order.findOneAndUpdate(
+				{ _id: orderId },
+				{ status: status },
+				{ new: true }
+			);
+
+			if (!updatedOrder) {
+				return res.status(404).json({ message: "Order not found" });
+			}
+
+			res.status(200).json({ message: "Order status updated successfully" });
+		} catch (error) {
+			console.error("Error updating order status:", error);
+			res.status(500).json({ message: "Error updating order status", error });
+		} finally {
 		}
 	} else {
 		res.status(405).json({ message: "Method not allowed" });

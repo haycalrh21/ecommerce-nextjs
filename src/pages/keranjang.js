@@ -3,6 +3,7 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 const Keranjang = () => {
 	const { data: session } = useSession();
@@ -36,7 +37,7 @@ const Keranjang = () => {
 	}, [cart]);
 
 	const handleCheckout = async (e) => {
-		e.preventDefault(); // Hindari pengiriman form secara default
+		e.preventDefault();
 
 		const amount = cart.reduce(
 			(total, item) => total + item.price * item.quantity,
@@ -60,30 +61,46 @@ const Keranjang = () => {
 
 			const data = await response.json();
 
-			if (data.token) {
+			if (data.token && data.orderId) {
 				window.snap.pay(data.token, {
-					onSuccess: function (result) {
-						console.log(result);
-						clearCart();
-						router.push("/dashboard");
+					onSuccess: async function (result) {
+						try {
+							clearCart();
+							await axios.put(
+								"/api/checkout",
+								{
+									orderId: data.orderId, // Menggunakan orderId dari respons
+									status: "sudah bayar",
+								},
+								{
+									headers: {
+										Authorization: `Bearer ${session.accessToken}`,
+									},
+								}
+							);
+							router.push("/dashboard");
+						} catch (error) {
+							console.error("Error updating order status:", error);
+						}
 					},
 					onPending: function (result) {
-						console.log(result);
+						console.log("Midtrans pending result:", result);
 						clearCart();
 						router.push("/dashboard");
 					},
 					onError: function (result) {
-						console.error(result);
+						console.error("Midtrans error result:", result);
 						clearCart();
 						router.push("/dashboard");
 					},
 					onClose: function () {
+						console.log("Snap modal closed without finishing the payment");
 						router.push("/dashboard");
 						clearCart();
-
-						console.log("Snap modal closed without finishing the payment");
 					},
 				});
+			} else {
+				console.error("No token or orderId received from Midtrans");
 			}
 		} catch (error) {
 			console.error("Error:", error);
@@ -107,10 +124,9 @@ const Keranjang = () => {
 	}, []);
 
 	const handleNextStep = () => {
-		// Logika untuk langkah selanjutnya dalam proses pembelian
-		// Misalnya, menampilkan formulir pengiriman atau konfirmasi pembelian
-		setCheckoutStep(2); // Contoh: Mengubah langkah checkout ke 2
+		setCheckoutStep(2);
 	};
+
 	return (
 		<div className='md:w-4/5 mx-auto py-10 px-6'>
 			<div className='container mx-auto px-4'>

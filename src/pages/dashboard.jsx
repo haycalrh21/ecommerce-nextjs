@@ -5,11 +5,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
+import Nota from "@/components/nota"; // Sesuaikan dengan path komponen Nota
 
 const Dashboard = () => {
 	const { data: session, status } = useSession();
 	const router = useRouter();
 	const [orders, setOrders] = useState([]);
+	const [selectedOrder, setSelectedOrder] = useState(null);
 
 	// Fetch orders
 	const fetchOrders = async () => {
@@ -30,14 +32,12 @@ const Dashboard = () => {
 	};
 
 	useEffect(() => {
-		// Fetch orders when session changes or on initial load
 		if (session) {
 			fetchOrders();
 		}
 	}, [session]);
 
 	useEffect(() => {
-		// Redirect to login if unauthenticated
 		if (status === "unauthenticated") {
 			router.push("/login");
 		}
@@ -58,7 +58,6 @@ const Dashboard = () => {
 
 	const bayar = async (order) => {
 		try {
-			// Ensure Snap.js script is loaded
 			const snapScript = "https://app.sandbox.midtrans.com/snap/snap.js";
 			const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY;
 
@@ -68,47 +67,54 @@ const Dashboard = () => {
 				script.setAttribute("data-client-key", clientKey);
 				script.async = true;
 				document.body.appendChild(script);
+
+				script.onload = () => {
+					initiatePayment(order);
+				};
+			} else {
+				initiatePayment(order);
 			}
-
-			// Initialize payment after Snap.js script is loaded
-			const paymentHandler = setInterval(() => {
-				if (window.snap) {
-					clearInterval(paymentHandler);
-
-					// Proceed with payment using Snap.js
-					window.snap.pay(order.token, {
-						onSuccess: async (result) => {
-							console.log("Payment success:", result);
-
-							// Update order status to 'sudah bayar'
-							await axios.put(
-								"/api/checkout",
-								{
-									orderId: order._id,
-									status: "sudah bayar",
-								},
-								{
-									headers: {
-										Authorization: `Bearer ${session.accessToken}`,
-									},
-								}
-							);
-
-							// Fetch updated orders
-							fetchOrders();
-						},
-						onClose: () => {
-							console.log("Payment closed without completion");
-							// Handle when user closes the payment window without completing the payment
-						},
-					});
-				}
-			}, 500);
 		} catch (error) {
 			console.error("Error during payment:", error);
-			// Handle error during payment if needed
 		}
 	};
+
+	const initiatePayment = (order) => {
+		window.snap.pay(order.token, {
+			onSuccess: async (result) => {
+				try {
+					await axios.put(
+						"/api/checkout",
+						{
+							orderId: order._id,
+							status: "sudah bayar",
+						},
+						{
+							headers: {
+								Authorization: `Bearer ${session.accessToken}`,
+							},
+						}
+					);
+
+					fetchOrders();
+				} catch (error) {
+					console.error("Error updating order status:", error);
+				}
+			},
+			onClose: () => {
+				console.log("Payment closed without completion");
+			},
+		});
+	};
+
+	const showNota = (order) => {
+		setSelectedOrder(order);
+	};
+
+	const closeNota = () => {
+		setSelectedOrder(null);
+	};
+
 	return (
 		<div className='md:w-4/5 mx-auto py-10 px-6'>
 			<h1 className='text-2xl mb-4'>Welcome, {session?.user?.name}</h1>
@@ -144,7 +150,10 @@ const Dashboard = () => {
 													<Button onClick={() => bayar(order)}>Bayar</Button>
 												) : (
 													<div>
-														<Button className='cursor-not-allowed bg-green-500'>
+														<Button
+															onClick={() => showNota(order)}
+															className='bg-green-500'
+														>
 															Sudah Bayar
 														</Button>
 													</div>
@@ -182,6 +191,20 @@ const Dashboard = () => {
 					)}
 				</TabsContent>
 			</Tabs>
+
+			{selectedOrder && (
+				<div className='fixed top-0 left-0 w-full h-full bg-gray-900 bg-opacity-50 flex items-center justify-center z-50'>
+					<div className='bg-white p-4 rounded-md relative w-full max-w-md mx-2'>
+						<Button
+							onClick={closeNota}
+							className='absolute top-8 right-4 p-1 bg-red-500 text-white rounded-md focus:outline-none'
+						>
+							Close
+						</Button>
+						<Nota order={selectedOrder} />
+					</div>
+				</div>
+			)}
 		</div>
 	);
 };
