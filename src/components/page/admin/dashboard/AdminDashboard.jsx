@@ -19,6 +19,7 @@ export default function AdminDashboard() {
 			const res = await fetch("/api/order");
 			const data = await res.json();
 			setOrders(data.data);
+
 			calculateRevenue(data.data);
 			calculateMonthlyRevenue(data.data);
 		} catch (error) {
@@ -54,10 +55,13 @@ export default function AdminDashboard() {
 
 	const calculateRevenue = (orders) => {
 		const totalRevenue = orders.reduce((acc, order) => {
-			const orderTotal = order.cartItems.reduce((orderAcc, item) => {
-				return orderAcc + item.price * item.quantity;
-			}, 0);
-			return acc + orderTotal;
+			if (order.status === "sudah bayar") {
+				const orderTotal = order.cartItems.reduce((orderAcc, item) => {
+					return orderAcc + item.price * item.quantity;
+				}, 0);
+				return acc + orderTotal;
+			}
+			return acc;
 		}, 0);
 		setRevenue(totalRevenue);
 	};
@@ -66,15 +70,17 @@ export default function AdminDashboard() {
 		const monthlyRevenue = {};
 
 		orders.forEach((order) => {
-			const month = dayjs(order.createdAt).format("YYYY-MM");
-			const orderTotal = order.cartItems.reduce((orderAcc, item) => {
-				return orderAcc + item.price * item.quantity;
-			}, 0);
+			if (order.status === "sudah bayar") {
+				const month = dayjs(order.createdAt).format("YYYY-MM");
+				const orderTotal = order.cartItems.reduce((orderAcc, item) => {
+					return orderAcc + item.price * item.quantity;
+				}, 0);
 
-			if (monthlyRevenue[month]) {
-				monthlyRevenue[month] += orderTotal;
-			} else {
-				monthlyRevenue[month] = orderTotal;
+				if (monthlyRevenue[month]) {
+					monthlyRevenue[month] += orderTotal;
+				} else {
+					monthlyRevenue[month] = orderTotal;
+				}
 			}
 		});
 

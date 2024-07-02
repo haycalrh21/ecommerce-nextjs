@@ -133,8 +133,7 @@ export default function Login() {
 										: "bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
 								}`}
 							>
-								{loading ? <Spinner /> : "Sign in"}{" "}
-								{/* Tampilkan Spinner jika loading */}
+								{loading ? <Spinner /> : "Sign in"}
 							</button>
 							<p className='mt-4'>
 								<Link

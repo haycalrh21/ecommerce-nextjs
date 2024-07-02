@@ -154,7 +154,7 @@ const Dashboard = () => {
 															onClick={() => showNota(order)}
 															className='bg-green-500'
 														>
-															Sudah Bayar
+															Invoice
 														</Button>
 													</div>
 												)}
