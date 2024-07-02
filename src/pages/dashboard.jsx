@@ -22,15 +22,11 @@ const Dashboard = () => {
 				},
 			});
 			const data = await res.json();
-			const filteredOrders = data.data.filter(
-				(order) => order.email === session.user.email
-			);
-			setOrders(filteredOrders);
+			setOrders(data.data);
 		} catch (error) {
 			console.error("Error fetching orders:", error);
 		}
 	};
-
 	useEffect(() => {
 		if (session) {
 			fetchOrders();
