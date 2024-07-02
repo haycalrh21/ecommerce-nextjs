@@ -8,7 +8,7 @@ import { useToast } from "@/components/ui/use-toast";
 import Spinner from "@/components/ui/spinner/Spinner";
 
 const Keranjang = () => {
-	const { data: session } = useSession();
+	const { data: session, status } = useSession();
 	const { cart, removeFromCart, clearCart } = useCart();
 	const [checkoutStep, setCheckoutStep] = useState(1);
 	const router = useRouter();
@@ -153,7 +153,11 @@ const Keranjang = () => {
 	}, []);
 
 	const handleNextStep = () => {
-		setCheckoutStep(2);
+		if (status === "unauthenticated") {
+			router.push("/login");
+		} else {
+			setCheckoutStep(2);
+		}
 	};
 
 	return (

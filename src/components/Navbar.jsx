@@ -92,7 +92,7 @@ export default function Navbar() {
 								<DropdownMenuContent>
 									{data ? (
 										<DropdownMenuLabel className='cursor-pointer hover:text-red-400'>
-											<Link href={`/dashboard/${data.user.email}`}>
+											<Link href={`/dashboard/${data?.user?.email}`}>
 												Dashboard
 											</Link>
 										</DropdownMenuLabel>
@@ -180,14 +180,20 @@ export default function Navbar() {
 								</Link>
 							</div>
 							<div className='text-white hover:bg-white hover:text-black rounded-lg p-1'>
-								<Link href={`/dashboard/${data.user.email}`}>
-									<Button
-										className='bg-white text-black hover:bg-white hover:text-black rounded-lg p-1 w-full'
-										onClick={closeNavbar} // Menutup dropdown saat Dashboard diklik
-									>
-										Dashboard
-									</Button>
-								</Link>
+								{data ? (
+									<Link href={`/dashboard/${data?.user?.email}`}>
+										<Button
+											className='bg-white text-black hover:bg-white hover:text-black rounded-lg p-1 w-full'
+											onClick={closeNavbar} // Menutup dropdown saat Dashboard diklik
+										>
+											Dashboard
+										</Button>
+									</Link>
+								) : (
+									<div className='hidden' disabled>
+										null
+									</div>
+								)}
 							</div>
 							<div className='text-white hover:bg-white hover:text-black rounded-lg p-1'>
 								<Button
