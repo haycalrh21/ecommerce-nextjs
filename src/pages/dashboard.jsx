@@ -27,6 +27,7 @@ const Dashboard = () => {
 			console.error("Error fetching orders:", error);
 		}
 	};
+
 	useEffect(() => {
 		if (session) {
 			fetchOrders();
