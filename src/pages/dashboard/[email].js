@@ -11,9 +11,24 @@ const Dashboard = () => {
 
 	const fetchOrders = async () => {
 		try {
-			const res = await fetch("/api/orderUser");
-			const data = await res.json();
+			const email = session?.user?.email;
+			if (!email) {
+				throw new Error("User email not found");
+			}
 
+			const res = await fetch("/api/orderUser", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ email }),
+			});
+
+			if (!res.ok) {
+				throw new Error("Failed to fetch orders");
+			}
+
+			const data = await res.json();
 			if (data.success) {
 				return data.data;
 			} else {

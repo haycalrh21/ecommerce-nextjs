@@ -36,7 +36,7 @@ export default function Login() {
 				if (role === "admin") {
 					router.push("/admin/dashboard");
 				} else {
-					router.push("/dashboard");
+					router.push(`/dashboard/${email}`);
 				}
 			}
 		} catch (error) {

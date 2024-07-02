@@ -1,21 +1,23 @@
+// /pages/api/orderUser.js
+
 import db from "@/lib/mongodb";
 import Order from "@/models/Order";
-import { getSession } from "next-auth/react";
 
 export default async function handler(req, res) {
-	const { method } = req;
+	const { method, body } = req;
 
 	await db.connect();
-	const session = await getSession({ req });
 
 	switch (method) {
-		case "GET":
+		case "POST":
 			try {
-				if (!session) {
-					throw new Error("User not authenticated");
+				const { email } = body; // Ambil email dari body request
+
+				if (!email) {
+					throw new Error("Email is required");
 				}
 
-				const orders = await Order.find({ email: session.user.email });
+				const orders = await Order.find({ email });
 
 				res.status(200).json({ success: true, data: orders });
 			} catch (error) {
@@ -25,7 +27,7 @@ export default async function handler(req, res) {
 			}
 			break;
 		default:
-			res.setHeader("Allow", ["GET"]);
+			res.setHeader("Allow", ["POST"]);
 			res.status(405).end(`Method ${method} Not Allowed`);
 	}
 }
