@@ -7,8 +7,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/ui/spinner/Spinner";
+import { motion } from "framer-motion";
+import { useSession } from "next-auth/react";
 
 export default function DetailProduct() {
+	const { data: session } = useSession();
+
 	const { addToCart } = useCart();
 	const router = useRouter();
 	const { slug } = router.query;
@@ -31,6 +35,46 @@ export default function DetailProduct() {
 				});
 		}
 	}, [slug]);
+
+	const handleAddToWishlist = async () => {
+		setLoading(true);
+		if (!session || !session.user) {
+			router.push("/login");
+			return;
+		}
+		try {
+			const response = await fetch("/api/wishlist", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					userId: session.user._id,
+					productId: product._id,
+				}),
+			});
+			if (response.ok) {
+				toast({
+					title: "Success",
+					description: `${product.name} has been added to your wishlist`,
+					duration: 1000,
+					variant: "gray",
+				});
+			} else {
+				throw new Error("Failed to add product to wishlist");
+			}
+		} catch (error) {
+			console.error("Error adding product to wishlist:", error);
+			toast({
+				title: "Sudah masuk wishlist",
+				description: "sudah ada di dalam  wishlist",
+				duration: 1000,
+				variant: "error",
+			});
+		} finally {
+			setLoading(false);
+		}
+	};
 
 	const handleAddToCart = () => {
 		setLoading(true);
@@ -73,7 +117,13 @@ export default function DetailProduct() {
 						</div>
 					) : (
 						<>
-							<ImageGallery images={product.images} />
+							<motion.div
+								initial={{ opacity: 0 }}
+								animate={{ opacity: 1 }}
+								transition={{ duration: 0.5 }}
+							>
+								<ImageGallery images={product.images} />
+							</motion.div>
 							<div className='md:py-8 mt-12'>
 								<div className='mb-2 md:mb-3'>
 									<h2 className='text-2xl font-bold text-gray-800 lg:text-3xl'>
@@ -97,10 +147,19 @@ export default function DetailProduct() {
 								<div className='flex gap-2.5'>
 									<Button
 										disabled={loading}
-										className='w-full h-10 mb-8 sm:w-full md:w-1/2 lg:w-1/7 flex flex-col justify-center items-center rounded-md bg-[#2F3645] text-2xl font-medium text-white hover:bg-[#666766]'
+										className='w-full h-10 mb-8 sm:w-full md:w-1/2 lg:w-1/7 flex flex-col justify-center items-center rounded-md  text-2xl font-medium text-white hover:bg-[#666766]'
 										onClick={handleAddToCart}
 									>
 										{loading ? <Spinner /> : "Add To Cart"}
+									</Button>
+								</div>
+								<div className='flex gap-1'>
+									<Button
+										disabled={loading}
+										className='w-full h-10 mb-8 sm:w-full md:w-1/2 lg:w-1/7 flex justify-center items-center rounded-md text-xl md:text-2xl font-medium text-white bg-red-700 hover:bg-gray-600'
+										onClick={handleAddToWishlist}
+									>
+										{loading ? <Spinner /> : "Add To Wishlist"}
 									</Button>
 								</div>
 							</div>

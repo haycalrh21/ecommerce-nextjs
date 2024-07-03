@@ -7,9 +7,15 @@ import { Button } from "@/components/ui/button";
 import axios from "axios";
 import Nota from "@/components/nota"; // Sesuaikan dengan path komponen Nota
 
-export default function DashboardUser({ orders = [] }) {
+export default function DashboardUser({ orders, wishlist }) {
+	// console.log(wishlist);
 	const { data: session, status } = useSession();
 	const [selectedOrder, setSelectedOrder] = useState(null);
+
+	const handleWishlistAction = (item) => {
+		// Logika untuk aksi pada wishlist item
+		// console.log(`Aksi untuk item dengan ID ${item.productId}`);
+	};
 
 	const formatToLocalTime = (utcDateString) => {
 		const options = {
@@ -82,6 +88,9 @@ export default function DashboardUser({ orders = [] }) {
 				<TabsList>
 					<TabsTrigger value='order'>Order</TabsTrigger>
 				</TabsList>
+				<TabsList>
+					<TabsTrigger value='wishlist'>wishlist</TabsTrigger>
+				</TabsList>
 				<TabsContent value='order'>
 					{orders.length > 0 ? (
 						<div className='overflow-x-auto'>
@@ -148,6 +157,47 @@ export default function DashboardUser({ orders = [] }) {
 						</div>
 					) : (
 						<p className='text-center mt-4'>No orders found.</p>
+					)}
+				</TabsContent>
+				<TabsContent value='wishlist'>
+					{wishlist.length > 0 ? (
+						<div className='overflow-x-auto'>
+							<table className='min-w-full bg-white'>
+								<thead>
+									<tr className='bg-gray-200 text-gray-600 uppercase text-sm leading-normal'>
+										<th className='py-3 px-6 text-left'>Product Name</th>
+										<th className='py-3 px-6 text-left'>Price</th>
+										<th className='py-3 px-6 text-left'>Image</th>
+										<th className='py-3 px-6 text-left'>Actions</th>
+									</tr>
+								</thead>
+								<tbody className='text-gray-600 text-sm font-light'>
+									{wishlist.map((item) => (
+										<tr
+											key={item.productId}
+											className='border-b border-gray-200 hover:bg-gray-100'
+										>
+											<td className='py-3 px-6 text-left'>{item.name}</td>
+											<td className='py-3 px-6 text-left'>{item.price}</td>
+											<td className='py-3 px-6 text-left'>
+												<img
+													src={item.images[0]}
+													alt={item.name}
+													className='h-20 w-auto object-cover'
+												/>
+											</td>
+											<td className='py-3 px-6 text-left'>
+												<Button onClick={() => handleWishlistAction(item)}>
+													Aksi
+												</Button>
+											</td>
+										</tr>
+									))}
+								</tbody>
+							</table>
+						</div>
+					) : (
+						<p className='text-center mt-4'>No wishlist items found.</p>
 					)}
 				</TabsContent>
 			</Tabs>

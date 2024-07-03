@@ -1,6 +1,6 @@
-// components/ImageGallery.js
 import Image from "next/image";
 import React, { useState } from "react";
+import { motion } from "framer-motion";
 
 export default function ImageGallery({ images }) {
 	const [bigImage, setBigImage] = useState(images[0]);
@@ -16,6 +16,7 @@ export default function ImageGallery({ images }) {
 					<div
 						key={idx}
 						className='overflow-hidden rounded-lg border-4 border-black'
+						onClick={() => handleSmallImageClick(image)}
 					>
 						<Image
 							src={image}
@@ -23,13 +24,18 @@ export default function ImageGallery({ images }) {
 							height={100}
 							alt='photo'
 							className='h-full w-full cursor-pointer object-cover object-center'
-							onClick={() => handleSmallImageClick(image)}
 						/>
 					</div>
 				))}
 			</div>
 
-			<div className='relative overflow-hidden rounded-lg border-4 border-black lg:col-span-4'>
+			<motion.div
+				initial={{ opacity: 0 }}
+				animate={{ opacity: 1 }}
+				exit={{ opacity: 0 }}
+				transition={{ duration: 0.3 }}
+				className='relative overflow-hidden rounded-lg border-4 border-black lg:col-span-4'
+			>
 				<Image
 					src={bigImage}
 					alt='Photo'
@@ -37,7 +43,7 @@ export default function ImageGallery({ images }) {
 					height={500}
 					className='h-full w-full object-cover object-center'
 				/>
-			</div>
+			</motion.div>
 		</div>
 	);
 }

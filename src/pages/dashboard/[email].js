@@ -7,6 +7,7 @@ const Dashboard = () => {
 	const { data: session, status } = useSession();
 	const router = useRouter();
 	const [orders, setOrders] = useState([]);
+	const [wishlist, setWishlist] = useState([]);
 	const [selectedOrder, setSelectedOrder] = useState(null);
 
 	const fetchOrders = async () => {
@@ -40,6 +41,34 @@ const Dashboard = () => {
 		}
 	};
 
+	const fetchWishlist = async () => {
+		try {
+			const email = session?.user?.email;
+			if (!email) {
+				throw new Error("User email not found");
+			}
+			const res = await fetch("/api/wishlist/wishlistuser", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ email }),
+			});
+			if (!res.ok) {
+				throw new Error("Failed to fetch wishlist");
+			}
+			const data = await res.json();
+			if (data.success) {
+				return data.data;
+			} else {
+				throw new Error(data.error || "Failed to fetch wishlist");
+			}
+		} catch (error) {
+			console.error("Error fetching wishlist:", error);
+			return [];
+		}
+	};
+
 	useEffect(() => {
 		if (status === "authenticated") {
 			fetchOrders().then((filteredOrders) => {
@@ -48,6 +77,11 @@ const Dashboard = () => {
 					(order) => order.email === session.user.email
 				);
 				setOrders(filtered);
+			});
+
+			fetchWishlist().then((wishlistItems) => {
+				// Set wishlist items state
+				setWishlist(wishlistItems);
 			});
 		}
 	}, [session, status]);
@@ -67,7 +101,12 @@ const Dashboard = () => {
 	};
 
 	return (
-		<DashboardUser orders={orders} showNota={showNota} closeNota={closeNota} />
+		<DashboardUser
+			orders={orders}
+			wishlist={wishlist}
+			showNota={showNota}
+			closeNota={closeNota}
+		/>
 	);
 };
 

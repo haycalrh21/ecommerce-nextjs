@@ -41,7 +41,7 @@ export default function Hero() {
 				</div>
 			</div>
 
-			<div className='flex flex-col items-center justify-between gap-8 md:flex-row'>
+			{/* <div className='flex flex-col items-center justify-between gap-8 md:flex-row'>
 				<div className='flex h-12 w-64 divide-x overflow-hidden rounded-lg border'>
 					<Link
 						href='/men'
@@ -62,7 +62,7 @@ export default function Hero() {
 						Teens
 					</Link>
 				</div>
-			</div>
+			</div> */}
 		</section>
 	);
 }

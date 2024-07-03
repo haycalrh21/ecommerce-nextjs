@@ -58,11 +58,11 @@ export default function Navbar() {
 								<Link href='/keranjang' passHref>
 									<p className='relative flex items-center'>
 										<ShoppingCart
-											className='w-8 h-8 rounded-md'
+											className='w-8 h-8 mr-3 rounded-md'
 											style={{ stroke: "#EEEDEB" }}
 										/>
 										{cart.length > 0 && (
-											<div className='absolute -top-1 -right-3 flex items-center justify-center w-4 h-4 bg-white rounded-full text-xs text-black'>
+											<div className='absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 bg-white rounded-full text-xs text-black'>
 												{cart.length}
 											</div>
 										)}

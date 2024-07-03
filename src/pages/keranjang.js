@@ -6,6 +6,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useToast } from "@/components/ui/use-toast";
 import Spinner from "@/components/ui/spinner/Spinner";
+import { Button } from "@/components/ui/button";
 
 const Keranjang = () => {
 	const { data: session, status } = useSession();
@@ -245,12 +246,12 @@ const Keranjang = () => {
 										className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm bg-white p-4 text-lg h-12'
 									/>
 								</div>
-								<button
-									className='w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600'
+								<Button
+									className='w-full'
 									onClick={handleNextStep} // Ganti fungsi handleNextStep sesuai kebutuhan
 								>
 									Submit
-								</button>
+								</Button>
 							</div>
 						)}
 					</div>
@@ -317,13 +318,13 @@ const Keranjang = () => {
 								required
 							/>
 						</div>
-						<button
+						<Button
 							type='submit'
 							disabled={loading} // Disable button saat loading
-							className='w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600'
+							className='w-full '
 						>
 							{loading ? <Spinner /> : "Checkout"}
-						</button>
+						</Button>
 					</form>
 				)}
 			</div>
