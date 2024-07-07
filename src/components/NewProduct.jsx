@@ -2,17 +2,31 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
 import { motion, AnimatePresence } from "framer-motion";
+import { useRouter } from "next/router";
 
 export default function NewProduct() {
 	const [products, setProducts] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [selectedProduct, setSelectedProduct] = useState(null);
+	const router = useRouter();
 
 	const dataProduct = async () => {
 		try {
 			const response = await fetch("/api/product/getproduct");
 			const data = await response.json();
-			setProducts(data);
+
+			// Filter produk yang memiliki properti `createdAt`
+			const filteredProducts = data.filter((product) => product.createdAt);
+
+			// Lakukan pengurutan berdasarkan properti `createdAt` jika tersedia
+			const sortedProducts = filteredProducts.sort(
+				(a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+			);
+
+			// Batasi hanya 4 produk yang ditampilkan
+			const limitedProducts = sortedProducts.slice(0, 4);
+
+			setProducts(limitedProducts);
 			setLoading(false);
 		} catch (error) {
 			console.error("Error fetching data:", error);
@@ -47,28 +61,38 @@ export default function NewProduct() {
 
 	return (
 		<div>
-			<div className='mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8'>
-				<div className='flex items-center justify-between'>
+			<motion.div
+				className='mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8'
+				initial='hidden'
+				animate='show'
+				variants={containerVariants}
+			>
+				<motion.div
+					className='flex items-center justify-between'
+					variants={itemVariants}
+				>
 					<h2 className='text-2xl font-bold tracking-tight text-gray-900'>
-						Produk Terbaru Kami
+						New Our Products
 					</h2>
 					<Link
 						className='flex items-center gap-x-1 text-primary'
 						href='/products'
 					>
-						Lihat Semua <span>-.</span>
+						Check this out <span>-&gt;</span>
 					</Link>
-				</div>
+				</motion.div>
 
 				<motion.div
-					className='mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8'
+					className='mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8 cursor-pointer'
 					variants={containerVariants}
-					initial='hidden'
-					animate='show'
 				>
 					{loading
 						? Array.from({ length: 8 }).map((_, index) => (
-								<div key={index} className='group relative'>
+								<motion.div
+									key={index}
+									className='group relative'
+									variants={itemVariants}
+								>
 									<Skeleton className='aspect-square w-full overflow-hidden rounded-md bg-gray-200 lg:h-80' />
 									<div className='mt-4 flex justify-between'>
 										<div className='space-y-2'>
@@ -77,7 +101,7 @@ export default function NewProduct() {
 										</div>
 										<Skeleton className='h-4 w-12' />
 									</div>
-								</div>
+								</motion.div>
 						  ))
 						: products.map((product) => (
 								<motion.div
@@ -113,7 +137,7 @@ export default function NewProduct() {
 								</motion.div>
 						  ))}
 				</motion.div>
-			</div>
+			</motion.div>
 
 			<AnimatePresence>
 				{selectedProduct && (
@@ -158,6 +182,12 @@ export default function NewProduct() {
 							</p>
 							<button
 								className='mt-4 bg-primary text-white py-2 px-4 rounded'
+								onClick={() => router.push(`/product/${selectedProduct.slug}`)}
+							>
+								Lihat Detail
+							</button>
+							<button
+								className='mt-4 bg-primary bg-red-500 text-white py-2 px-4 rounded block'
 								onClick={() => setSelectedProduct(null)}
 							>
 								Close

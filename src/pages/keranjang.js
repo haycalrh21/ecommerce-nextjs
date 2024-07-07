@@ -164,7 +164,7 @@ const Keranjang = () => {
 	return (
 		<div className='md:w-4/5 mx-auto py-10 px-6'>
 			<div className='container mx-auto px-4'>
-				<h1 className='text-2xl font-bold mb-5'>Keranjang Belanja</h1>
+				<h1 className='text-2xl font-bold mb-5'>Cart</h1>
 				{checkoutStep === 1 ? (
 					<div className='flex flex-col md:flex-row gap-4'>
 						<div className='w-full md:w-5/5'>
@@ -181,23 +181,23 @@ const Keranjang = () => {
 										/>
 										<div className='flex-1 text-center md:text-left'>
 											<h2 className='text-lg font-semibold'>{item.name}</h2>
-											<p>Jumlah: {item.quantity}</p>
+											<p>Quantity: {item.quantity}</p>
 											<p>Price: Rp{item.price.toLocaleString()}</p>
 										</div>
 										<button
 											onClick={() => removeFromCart(item.id)}
 											className='bg-black text-white p-2 hover:bg-red-600 mt-4 md:mt-0 ml-0 md:ml-5 rounded-md'
 										>
-											Kurangi jumlah
+											Remove Quantity
 										</button>
 									</div>
 								))
 							) : (
 								<div>
 									<p className='text-lg font-semibold text-center justify-center'>
-										Keranjang Anda kosong. Mulai berbelanja{" "}
+										Your cart is empty. Find your product
 										<Link href='/products' className='block hover:underline'>
-											klik disini
+											here
 										</Link>
 										.
 									</p>
@@ -260,10 +260,10 @@ const Keranjang = () => {
 						onSubmit={handleCheckout}
 						className='bg-white p-6 rounded-lg shadow-md'
 					>
-						<h2 className='text-lg font-semibold mb-4'>Data Diri</h2>
+						<h2 className='text-lg font-semibold mb-4'>Form Data Personal</h2>
 						<div className='mb-4'>
 							<label className='block text-sm font-medium text-gray-700'>
-								Nama
+								Name
 							</label>
 							<input
 								type='text'
@@ -291,7 +291,7 @@ const Keranjang = () => {
 						</div>
 						<div className='mb-4'>
 							<label className='block text-sm font-medium text-gray-700'>
-								Alamat
+								Address
 							</label>
 							<textarea
 								name='address'
@@ -305,7 +305,7 @@ const Keranjang = () => {
 						</div>
 						<div className='mb-4'>
 							<label className='block text-sm font-medium text-gray-700'>
-								Telepon
+								Telephone
 							</label>
 							<input
 								type='text'

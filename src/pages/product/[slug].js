@@ -37,7 +37,7 @@ export default function DetailProduct() {
 	}, [slug]);
 
 	const handleAddToWishlist = async () => {
-		setLoading(true);
+		// setLoading(true);
 		if (!session || !session.user) {
 			router.push("/login");
 			return;

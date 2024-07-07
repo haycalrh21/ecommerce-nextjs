@@ -6,6 +6,7 @@ import { CartProvider } from "@/hooks/cartContext";
 import { SessionProvider } from "next-auth/react";
 import { useRouter } from "next/router";
 import { Toaster } from "@/components/ui/toaster";
+import Footer from "@/components/Footer";
 
 const disableNavbar = ["admin", "login", "register"];
 
@@ -24,6 +25,7 @@ export default function App({ Component, pageProps, session }) {
 					<Component {...pageProps} />
 					<Toaster />
 				</div>
+				{!shouldDisableNavbar && <Footer />}
 			</CartProvider>
 			{/* </UserProvider> */}
 		</SessionProvider>

@@ -17,7 +17,7 @@ export default function ProductsAll() {
 	const [priceRange, setPriceRange] = useState([0, 100000000]);
 	const [sortOrder, setSortOrder] = useState("a-z");
 	const [currentPage, setCurrentPage] = useState(1);
-	const itemsPerPage = 2;
+	const itemsPerPage = 8;
 
 	const dataProduct = async () => {
 		try {
