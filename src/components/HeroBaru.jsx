@@ -25,7 +25,7 @@ const ShuffleHero = () => {
 	}, []);
 
 	return (
-		<section className='w-full px-8 py-12 grid grid-cols-1 md:grid-cols-2 items-center gap-8 max-w-6xl mx-auto'>
+		<section className='w-full   grid grid-cols-1 md:grid-cols-2 items-center gap-8 max-w-6xl mx-auto'>
 			<div>
 				<span className='block mb-4 text-xs md:text-sm text-gray-500 font-medium'>
 					Better every day
@@ -110,7 +110,7 @@ const ShuffleGrid = ({ images }) => {
 	}, [images]);
 
 	return (
-		<div className='grid grid-cols-4 grid-rows-4 h-[450px] gap-1 '>
+		<div className='grid grid-cols-4 grid-rows-4 gap-1 h-[200px] sm:h-[300px] md:h-[350px] lg:h-[400px] xl:h-[450px]'>
 			{squares}
 		</div>
 	);

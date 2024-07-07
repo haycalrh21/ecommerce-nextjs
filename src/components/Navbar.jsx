@@ -91,7 +91,7 @@ export default function Navbar() {
 								</DropdownMenuTrigger>
 								<DropdownMenuContent>
 									{data ? (
-										<DropdownMenuLabel className='cursor-pointer hover:text-red-400'>
+										<DropdownMenuLabel className='cursor-pointer hover:text-gray-400 hover:underline'>
 											<Link href={`/dashboard/${data?.user?.email}`}>
 												Dashboard
 											</Link>
@@ -99,13 +99,13 @@ export default function Navbar() {
 									) : (
 										<DropdownMenuLabel
 											onClick={() => (window.location.href = "/register")}
-											className='cursor-pointer hover:text-red-500'
+											className='cursor-pointer hover:underline hover:text-gray-500'
 										>
 											Register
 										</DropdownMenuLabel>
 									)}
 									<DropdownMenuLabel
-										className='cursor-pointer hover:text-red-400'
+										className='cursor-pointer hover:text-gray-400 hover:underline'
 										onClick={() => {
 											closeNavbar(); // Menutup dropdown saat Logout/Login diklik
 											data ? signOut() : signIn();

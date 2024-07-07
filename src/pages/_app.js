@@ -7,6 +7,7 @@ import { SessionProvider } from "next-auth/react";
 import { useRouter } from "next/router";
 import { Toaster } from "@/components/ui/toaster";
 import Footer from "@/components/Footer";
+import { Suspense } from "react";
 
 const disableNavbar = ["admin", "login", "register"];
 
@@ -17,17 +18,19 @@ export default function App({ Component, pageProps, session }) {
 	);
 
 	return (
-		<SessionProvider session={session}>
-			{/* <UserProvider> */}
-			<CartProvider>
-				{!shouldDisableNavbar && <Navbar />}
-				<div className='min-h-screen bg-[#EEEDEB]'>
-					<Component {...pageProps} />
-					<Toaster />
-				</div>
-				{!shouldDisableNavbar && <Footer />}
-			</CartProvider>
-			{/* </UserProvider> */}
-		</SessionProvider>
+		<Suspense fallback={<div>Loading...</div>}>
+			<SessionProvider session={session}>
+				{/* <UserProvider> */}
+				<CartProvider>
+					{!shouldDisableNavbar && <Navbar />}
+					<div className='min-h-screen bg-[#EEEDEB]'>
+						<Component {...pageProps} />
+						<Toaster />
+					</div>
+					{!shouldDisableNavbar && <Footer />}
+				</CartProvider>
+				{/* </UserProvider> */}
+			</SessionProvider>
+		</Suspense>
 	);
 }

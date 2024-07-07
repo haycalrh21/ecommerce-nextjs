@@ -62,7 +62,7 @@ export default function NewProduct() {
 	return (
 		<div>
 			<motion.div
-				className='mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8'
+				className='mx-auto mb-20 max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8'
 				initial='hidden'
 				animate='show'
 				variants={containerVariants}
@@ -71,7 +71,7 @@ export default function NewProduct() {
 					className='flex items-center justify-between'
 					variants={itemVariants}
 				>
-					<h2 className='text-2xl font-bold tracking-tight text-gray-900'>
+					<h2 className='mb-50 text-2xl font-bold tracking-tight text-gray-900'>
 						New Our Products
 					</h2>
 					<Link

@@ -160,26 +160,42 @@ export default function ProductsAll() {
 			</div>
 			<Pagination>
 				<PaginationContent>
+					{currentPage > 1 && (
+						<PaginationItem>
+							<PaginationPrevious
+								onClick={() =>
+									setCurrentPage((prevPage) =>
+										prevPage > 1 ? prevPage - 1 : 1
+									)
+								}
+								className='cursor-pointer bg-gray-500 hover:bg-black hover:text-white'
+							/>
+						</PaginationItem>
+					)}
 					{Array.from({ length: totalPages }, (_, index) => (
 						<PaginationItem key={index}>
 							<Link href={`?page=${index + 1}`} passHref>
-								<PaginationLink onClick={() => paginate(index + 1)}>
+								<PaginationLink
+									onClick={() => paginate(index + 1)}
+									className='cursor-pointer bg-gray-500 hover:bg-black hover:text-white'
+								>
 									{index + 1}
 								</PaginationLink>
 							</Link>
 						</PaginationItem>
 					))}
-					<PaginationItem>
-						<Link href={`?page=${currentPage + 1}`} passHref>
+					{currentPage < totalPages && (
+						<PaginationItem>
 							<PaginationNext
 								onClick={() =>
 									setCurrentPage((prevPage) =>
 										prevPage < totalPages ? prevPage + 1 : totalPages
 									)
 								}
+								className='cursor-pointer bg-gray-500 hover:bg-black hover:text-white'
 							/>
-						</Link>
-					</PaginationItem>
+						</PaginationItem>
+					)}
 				</PaginationContent>
 			</Pagination>
 		</div>

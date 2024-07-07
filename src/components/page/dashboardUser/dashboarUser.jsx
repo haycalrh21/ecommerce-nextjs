@@ -6,12 +6,12 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 import Nota from "@/components/nota"; // Sesuaikan dengan path komponen Nota
+import { useRouter } from "next/router";
 
 export default function DashboardUser({ orders, wishlist }) {
-	// console.log(wishlist);
 	const { data: session, status } = useSession();
 	const [selectedOrder, setSelectedOrder] = useState(null);
-
+	const router = useRouter();
 	const handleWishlistAction = (item) => {
 		// Logika untuk aksi pada wishlist item
 		// console.log(`Aksi untuk item dengan ID ${item.productId}`);
@@ -71,11 +71,15 @@ export default function DashboardUser({ orders, wishlist }) {
 					);
 
 					fetchOrders();
+					router.push(`/thanks`);
 				} catch (error) {
 					console.error("Error updating order status:", error);
+					router.push(`/dashboard/${session?.user?.email}`);
 				}
 			},
 			onClose: () => {
+				router.push(`/dashboard/${session?.user?.email}`);
+
 				console.log("Payment closed without completion");
 			},
 		});

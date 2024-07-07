@@ -91,7 +91,7 @@ const Keranjang = () => {
 								duration: 1000,
 								variant: "gray",
 							});
-							router.push("/dashboard");
+							router.push(`/dashboard/${session?.user?.email}`);
 						} catch (error) {
 							console.error("Error updating order status:", error);
 						}
@@ -104,7 +104,7 @@ const Keranjang = () => {
 							variant: "gray",
 						});
 						clearCart();
-						router.push("/dashboard");
+						router.push(`/dashboard/${session?.user?.email}`);
 					},
 					onError: function (result) {
 						toast({
@@ -115,7 +115,7 @@ const Keranjang = () => {
 						});
 
 						clearCart();
-						router.push("/dashboard");
+						router.push(`/dashboard/${session?.user?.email}`);
 					},
 					onClose: function () {
 						toast({
@@ -124,8 +124,9 @@ const Keranjang = () => {
 							duration: 1000,
 							variant: "gray",
 						});
-						console.log("Snap modal closed without finishing the payment");
-						router.push("/dashboard");
+
+						router.push(`/dashboard/${session?.user?.email}`);
+
 						clearCart();
 					},
 				});
