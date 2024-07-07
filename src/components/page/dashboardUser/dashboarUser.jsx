@@ -71,7 +71,6 @@ export default function DashboardUser({ orders, wishlist }) {
 					);
 
 					fetchOrders();
-					router.push(`/thanks`);
 				} catch (error) {
 					console.error("Error updating order status:", error);
 					router.push(`/dashboard/${session?.user?.email}`);

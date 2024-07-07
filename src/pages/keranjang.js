@@ -87,7 +87,7 @@ const Keranjang = () => {
 							);
 							toast({
 								title: "Success",
-								description: `${product.name}  has been added to your cart`,
+								description: `Pembayaran selesai`,
 								duration: 1000,
 								variant: "gray",
 							});
