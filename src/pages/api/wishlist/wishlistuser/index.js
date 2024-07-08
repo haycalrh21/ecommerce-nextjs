@@ -33,9 +33,7 @@ export default async function handler(req, res) {
 			});
 
 			if (!wishlistItems || wishlistItems.length === 0) {
-				return res
-					.status(404)
-					.json({ success: false, error: "Wishlist items not found" });
+				return null;
 			}
 
 			// Array untuk menyimpan detail produk dari wishlist
@@ -54,6 +52,7 @@ export default async function handler(req, res) {
 
 					// Tambahkan detail produk ke dalam array response
 					wishlistWithProductDetails.push({
+						_id: wishlistItems[i]._id,
 						productId,
 						name,
 						price,

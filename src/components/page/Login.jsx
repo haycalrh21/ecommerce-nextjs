@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from "next/link";
 import Spinner from "../ui/spinner/Spinner";
+import { useToast } from "../ui/use-toast";
 
 export default function Login() {
 	const router = useRouter();
@@ -11,6 +12,8 @@ export default function Login() {
 	const [password, setPassword] = useState("");
 	const [error, setError] = useState("");
 	const [loading, setLoading] = useState(false); // State untuk loading
+
+	const { toast } = useToast();
 
 	const handleSubmit = async (event) => {
 		event.preventDefault();
@@ -24,7 +27,13 @@ export default function Login() {
 			});
 
 			if (result.error) {
-				console.error("Login failed:", result.error);
+				toast({
+					title: "Failed",
+					description: `Login failed`,
+					duration: 1000,
+					variant: "gray",
+				});
+
 				setError("Login failed. Please check your credentials and try again.");
 				setLoading(false); // Set loading false setelah login gagal
 			} else {
@@ -35,11 +44,29 @@ export default function Login() {
 				// Redirect berdasarkan role
 				if (role === "admin") {
 					router.push("/admin/dashboard");
+					toast({
+						title: "Success",
+						description: `Login success`,
+						duration: 1000,
+						variant: "gray",
+					});
 				} else {
 					router.push(`/dashboard/${email}`);
+					toast({
+						title: "Success",
+						description: `Login success`,
+						duration: 1000,
+						variant: "gray",
+					});
 				}
 			}
 		} catch (error) {
+			toast({
+				title: "Error",
+				description: `Login error`,
+				duration: 1000,
+				variant: "gray",
+			});
 			console.error("Login error:", error);
 			setError("Error during login. Please try again later.");
 			setLoading(false); // Set loading false jika terjadi error

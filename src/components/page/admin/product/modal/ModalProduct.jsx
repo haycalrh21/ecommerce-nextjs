@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import Spinner from "@/components/ui/spinner/Spinner";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function NewProductModal({ isOpen, onClose }) {
 	const [formData, setFormData] = useState({
@@ -16,6 +17,7 @@ export default function NewProductModal({ isOpen, onClose }) {
 	const [imagePreviews, setImagePreviews] = useState([]);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState("");
+	const { toast } = useToast();
 
 	const handleChange = (e) => {
 		const { name, value } = e.target;
@@ -77,7 +79,13 @@ export default function NewProductModal({ isOpen, onClose }) {
 				images: [],
 			});
 			setImagePreviews([]);
-			setLoading(false); // Set loading false setelah sukses submit
+			setLoading(false);
+			toast({
+				title: "Success",
+				description: `Product ${res.data.name} has been submitted`,
+				duration: 1000,
+				variant: "gray",
+			});
 			onClose(); // Tutup modal setelah pengiriman berhasil
 		} catch (error) {
 			setLoading(false); // Set loading false jika terjadi error

@@ -58,13 +58,13 @@ const Dashboard = () => {
 				throw new Error("Failed to fetch wishlist");
 			}
 			const data = await res.json();
+			// console.log(data);
 			if (data.success) {
 				return data.data;
 			} else {
-				throw new Error(data.error || "Failed to fetch wishlist");
+				return null;
 			}
 		} catch (error) {
-			console.error("Error fetching wishlist:", error);
 			return [];
 		}
 	};

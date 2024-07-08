@@ -25,7 +25,7 @@ const ShuffleHero = () => {
 	}, []);
 
 	return (
-		<section className='w-full   grid grid-cols-1 md:grid-cols-2 items-center gap-8 max-w-6xl mx-auto'>
+		<section className='w-full h-auto md:h-[450px] lg:h-[350px] xl:h-[350px] grid grid-cols-1 md:grid-cols-2 items-center gap-8 max-w-6xl mx-auto'>
 			<div>
 				<span className='block mb-4 text-xs md:text-sm text-gray-500 font-medium'>
 					Better every day
@@ -53,7 +53,7 @@ const shuffle = (array) => {
 	let currentIndex = array.length,
 		randomIndex;
 
-	while (currentIndex != 0) {
+	while (currentIndex !== 0) {
 		randomIndex = Math.floor(Math.random() * currentIndex);
 		currentIndex--;
 
@@ -67,7 +67,8 @@ const shuffle = (array) => {
 };
 
 const generateSquares = (images) => {
-	const squareData = images.map((image) => ({
+	const limitedImages = images.slice(0, 8); // Ambil maksimal 8 gambar pertama
+	const squareData = limitedImages.map((image) => ({
 		id: image.id,
 		src: image.src,
 	}));
@@ -77,8 +78,9 @@ const generateSquares = (images) => {
 			key={sq.id}
 			layout
 			transition={{ duration: 1.5, type: "spring" }}
-			className='w-full h-full border-2 border-black'
+			className='relative w-full h-20 border-2 border-black rounded overflow-hidden'
 			style={{
+				paddingBottom: "100%", // Maintain aspect ratio (1:1 for squares)
 				backgroundImage: `url(${sq.src})`,
 				backgroundSize: "cover",
 			}}
@@ -110,7 +112,7 @@ const ShuffleGrid = ({ images }) => {
 	}, [images]);
 
 	return (
-		<div className='grid grid-cols-4 grid-rows-4 gap-1 h-[200px] sm:h-[300px] md:h-[350px] lg:h-[400px] xl:h-[450px]'>
+		<div className='grid grid-cols-2 sm:grid-cols-4 gap-1 h-auto md:h-[350px] lg:h-[400px] xl:h-[450px]'>
 			{squares}
 		</div>
 	);

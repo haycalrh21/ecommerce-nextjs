@@ -13,6 +13,7 @@ const Keranjang = () => {
 	const { cart, removeFromCart, clearCart } = useCart();
 	const [checkoutStep, setCheckoutStep] = useState(1);
 	const router = useRouter();
+
 	const { toast } = useToast();
 	const [loading, setLoading] = useState(false);
 
@@ -78,6 +79,7 @@ const Keranjang = () => {
 								{
 									orderId: data.orderId, // Menggunakan orderId dari respons
 									status: "sudah bayar",
+									token: "",
 								},
 								{
 									headers: {

@@ -7,16 +7,38 @@ import { Button } from "@/components/ui/button";
 import axios from "axios";
 import Nota from "@/components/nota"; // Sesuaikan dengan path komponen Nota
 import { useRouter } from "next/router";
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+	AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export default function DashboardUser({ orders, wishlist }) {
+	// console.log(wishlist);
 	const { data: session, status } = useSession();
 	const [selectedOrder, setSelectedOrder] = useState(null);
 	const router = useRouter();
-	const handleWishlistAction = (item) => {
-		// Logika untuk aksi pada wishlist item
-		// console.log(`Aksi untuk item dengan ID ${item.productId}`);
+	const handleWishlistAction = async (wishlist) => {
+		try {
+			const response = await axios.delete(
+				`/api/wishlist/hapuswishlist/${wishlist._id}`
+			);
+			if (response.data.success) {
+				router.reload();
+			} else {
+				console.error("Failed to delete wishlist item:", response.data.error);
+			}
+		} catch (error) {
+			console.error("Error deleting wishlist item:", error);
+		}
+		// console.log(`Aksi untuk item dengan ID ${wishlist._id}`);
 	};
-
 	const formatToLocalTime = (utcDateString) => {
 		const options = {
 			timeZone: "Asia/Jakarta",
@@ -62,6 +84,7 @@ export default function DashboardUser({ orders, wishlist }) {
 						{
 							orderId: order._id,
 							status: "sudah bayar",
+							token: "",
 						},
 						{
 							headers: {
@@ -190,9 +213,32 @@ export default function DashboardUser({ orders, wishlist }) {
 												/>
 											</td>
 											<td className='py-3 px-6 text-left'>
-												<Button onClick={() => handleWishlistAction(item)}>
-													Aksi
-												</Button>
+												<AlertDialog>
+													<AlertDialogTrigger className='bg-red-500 rounded-md p-2 text-white hover:underline'>
+														Delete
+													</AlertDialogTrigger>
+													<AlertDialogContent>
+														<AlertDialogHeader>
+															<AlertDialogTitle>
+																Are you absolutely sure?
+															</AlertDialogTitle>
+															<AlertDialogDescription>
+																This action cannot be undone. This will
+																permanently delete your wishlist and remove your
+																data from our servers.
+															</AlertDialogDescription>
+														</AlertDialogHeader>
+														<AlertDialogFooter>
+															<AlertDialogCancel>Cancel</AlertDialogCancel>
+															<AlertDialogAction
+																onClick={() => handleWishlistAction(item)}
+																className='bg-red-500 rounded-md p-2 text-white hover:underline'
+															>
+																Continue
+															</AlertDialogAction>
+														</AlertDialogFooter>
+													</AlertDialogContent>
+												</AlertDialog>
 											</td>
 										</tr>
 									))}

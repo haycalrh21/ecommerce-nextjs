@@ -43,9 +43,9 @@ export default async function handler(req, res) {
 			break;
 		case "PUT":
 			try {
-				const { orderId, status } = req.body;
+				const { orderId, status, token } = req.body;
 
-				if (!orderId || !status) {
+				if (!orderId || !status || typeof token === "undefined") {
 					return res
 						.status(400)
 						.json({ success: false, error: "Data tidak lengkap" });
@@ -53,7 +53,7 @@ export default async function handler(req, res) {
 
 				const updatedOrder = await Order.findOneAndUpdate(
 					{ _id: orderId },
-					{ status },
+					{ $set: { status, token } },
 					{ new: true }
 				);
 

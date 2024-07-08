@@ -4,10 +4,24 @@ import { AdminDashboard, AdminLayout } from "../AdminLayout";
 import NewProductModal from "./modal/ModalProduct";
 import axios from "axios";
 
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+	AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { useToast } from "@/components/ui/use-toast";
+
 export default function AdminProducts() {
 	const [products, setProducts] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [isModalOpen, setIsModalOpen] = useState(false); // State untuk modal
+	const { toast } = useToast();
 
 	// Function to fetch products
 	const fetchProducts = async () => {
@@ -44,18 +58,19 @@ export default function AdminProducts() {
 
 	const deleteProduct = async (productId) => {
 		try {
-			const confirmDelete = window.confirm(
-				"Are you sure you want to delete this product?"
+			const response = await axios.delete(
+				`/api/product/deleteproduct/${productId}`
 			);
-			if (confirmDelete) {
-				const response = await axios.delete(
-					`/api/product/deleteproduct/${productId}`
-				);
-				if (response.data.success) {
-					fetchProducts(); // Fetch products again to update list
-				} else {
-					console.error("Failed to delete product:", response.data.error);
-				}
+			if (response.data.success) {
+				toast({
+					title: "Success",
+					description: `Product deleted successfully`,
+					duration: 1000,
+					variant: "gray",
+				});
+				fetchProducts();
+			} else {
+				console.error("Failed to delete product:", response.data.error);
 			}
 		} catch (error) {
 			console.error("Error deleting product:", error);
@@ -122,16 +137,35 @@ export default function AdminProducts() {
 												<div className='flex flex-col sm:flex-row lg:flex-col lg:items-start'>
 													<Button
 														onClick={() => editProduct(product._id)}
-														className='w-full sm:w-1/2 lg:w-full mr-0 sm:mr-2 lg:mr-0 mb-2 sm:mb-0 lg:mb-2 hover:bg-yellow-500'
+														className='w-full sm:w-1/2 lg:w-full mr-0 sm:mr-2 lg:mr-0 mb-2 sm:mb-0 lg:mb-2 hover:underline'
 													>
 														Edit
 													</Button>
-													<Button
-														onClick={() => deleteProduct(product._id)}
-														className='w-full sm:w-1/2 lg:w-full hover:bg-red-500'
-													>
-														Delete
-													</Button>
+													<AlertDialog>
+														<AlertDialogTrigger className='w-full bg-red-500 rounded-md text-white font-semibold py-3 px-2 sm:w-1/2 lg:w-full mr-0 sm:mr-2 lg:mr-0 mb-2 sm:mb-0 lg:mb-2 hover:underline'>
+															Delete
+														</AlertDialogTrigger>
+														<AlertDialogContent>
+															<AlertDialogHeader>
+																<AlertDialogTitle>
+																	Are you absolutely sure?
+																</AlertDialogTitle>
+																<AlertDialogDescription>
+																	This action cannot be undone. This will
+																	permanently delete your account and remove
+																	your data from our servers.
+																</AlertDialogDescription>
+															</AlertDialogHeader>
+															<AlertDialogFooter>
+																<AlertDialogCancel>Cancel</AlertDialogCancel>
+																<AlertDialogAction
+																	onClick={() => deleteProduct(product._id)}
+																>
+																	Continue
+																</AlertDialogAction>
+															</AlertDialogFooter>
+														</AlertDialogContent>
+													</AlertDialog>
 												</div>
 											</td>
 										</tr>

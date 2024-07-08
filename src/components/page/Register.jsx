@@ -3,12 +3,14 @@ import { motion } from "framer-motion";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { useToast } from "../ui/use-toast";
 
 export default function Register() {
 	const [name, setName] = useState("");
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const router = useRouter();
+	const { toast } = useToast();
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -21,7 +23,19 @@ export default function Register() {
 		});
 		if (res.ok) {
 			router.push("/login");
+			toast({
+				title: "Success",
+				description: `Register success`,
+				duration: 1000,
+				variant: "gray",
+			});
 		} else {
+			toast({
+				title: "Failed",
+				description: `Register failed`,
+				duration: 1000,
+				variant: "gray",
+			});
 			console.error(await res.json());
 		}
 	};
